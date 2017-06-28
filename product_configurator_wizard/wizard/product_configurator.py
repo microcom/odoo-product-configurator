@@ -111,7 +111,7 @@ class ProductConfigurator(models.TransientModel):
                     continue
         return domains
 
-    def get_form_vals(self, dynamic_fields, domains, cfg_step):
+    def get_form_vals(self, dynamic_fields, domains, cfg_step, single=False):
         """Generate a dictionary to return new values via onchange method.
         Domains hold the values available, this method enforces these values
         if a selection exists in the view that is not available anymore.
@@ -142,9 +142,21 @@ class ProductConfigurator(models.TransientModel):
                              if dfv and isinstance(dfv, list)]:
                 config_val_ids.extend(list_dfv[0][2])
             if not v:
+                # single value for required field
+                available_step_val_ids = set(available_val_ids) & set(step_val_ids)
+                if single and len(available_step_val_ids) == 1:
+                    def_value_id = available_step_val_ids.pop()
+                    attribute_line_id = next(
+                        (al for al in self.attribute_line_ids if al.required and def_value_id in al.value_ids.ids),
+                        None)
+                    if attribute_line_id:
+                        dynamic_fields.update({k: def_value_id})
+                        vals[k] = def_value_id
+                        continue
                 # if the value currently is blank and on the current step, see
                 # if one can be set
                 if set(available_val_ids) & set(step_val_ids):
+
                     def_value_id = self.product_tmpl_id.find_default_value(
                         available_val_ids, config_val_ids
                     )
@@ -157,6 +169,17 @@ class ProductConfigurator(models.TransientModel):
                 dynamic_fields[k] = [[6, 0, value_ids]]
                 vals[k] = [[6, 0, value_ids]]
             elif v not in available_val_ids:
+                # single value for required field
+                available_step_val_ids = set(available_val_ids) & set(step_val_ids)
+                if single and len(available_step_val_ids) == 1:
+                    def_value_id = available_step_val_ids.pop()
+                    attribute_line_id = next(
+                        (al for al in self.attribute_line_ids if al.required and def_value_id in al.value_ids.ids),
+                        None)
+                    if attribute_line_id:
+                        dynamic_fields.update({k: def_value_id})
+                        vals[k] = def_value_id
+                        continue
                 # if the value is to be blanked, and it is on the current
                 # step, see if a default can be set
                 if set(available_val_ids) & set(step_val_ids):
@@ -234,7 +257,7 @@ class ProductConfigurator(models.TransientModel):
         cfg_val_ids = cfg_vals.ids + list(view_val_ids)
 
         domains = self.get_onchange_domains(values, cfg_val_ids)
-        vals = self.get_form_vals(dynamic_fields, domains, cfg_step)
+        vals = self.get_form_vals(dynamic_fields, domains, cfg_step, single=True)
         modified_dynamics = {k: v
                              for k, v in vals.iteritems()
                              if k in dynamic_fields}
@@ -255,7 +278,7 @@ class ProductConfigurator(models.TransientModel):
             cfg_val_ids = cfg_vals.ids + list(view_val_ids)
 
             domains = self.get_onchange_domains(values, cfg_val_ids)
-            nvals = self.get_form_vals(dynamic_fields, domains, cfg_step)
+            nvals = self.get_form_vals(dynamic_fields, domains, cfg_step, single=True)
             # Stop possible recursion by not including values which have
             # previously looped
             modified_dynamics = {k: v
