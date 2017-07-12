@@ -21,9 +21,10 @@
                         states="draft,sent"
                         class="oe_highlight"
                         type="action"
-                        style="margin-top: 15px;margin-bottom: 10px;"
+                        style="margin-top: 15px;margin-bottom: 10px;margin-left: 20px;"
                         string="Configure Product"
-                        groups="product_configurator.group_product_configurator"/>
+                        groups="product_configurator.group_product_configurator"
+						/>
             </xpath>
 
             <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="after">
