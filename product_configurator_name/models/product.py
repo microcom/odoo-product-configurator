@@ -80,7 +80,7 @@ class ProductProduct(models.Model):
                     variable_attributes = product.attribute_line_ids.filtered(lambda l: len(l.value_ids) > 1).mapped('attribute_id')
                     variant = product.attribute_value_ids._variant_name(variable_attributes)
 
-                name = variant and "%s (%s)" % (product.name, variant) or product.name
+                name = variant and "%s, %s" % (product.name, variant) or product.name
             # END CHANGES
             sellers = []
             if partner_ids:
@@ -90,7 +90,7 @@ class ProductProduct(models.Model):
             if sellers:
                 for s in sellers:
                     seller_variant = s.product_name and (
-                        variant and "%s (%s)" % (s.product_name, variant) or s.product_name
+                        variant and "%s, %s" % (s.product_name, variant) or s.product_name
                         ) or False
                     mydict = {
                               'id': product.id,
