@@ -7,10 +7,8 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     @api.multi
-    def reconfigure_product(self):
-        """ Creates and launches a product configurator wizard with a linked
-        template and variant in order to re-configure a existing product. It is
-        esetially a shortcut to pre-fill configuration data of a variant"""
+    def reconfigure_product_variant(self):
+        """ Copied from product_configurator_wizard.sale.py """
 
         cfg_steps = self.product_tmpl_id.config_step_line_ids
         active_step = str(cfg_steps[0].id) if cfg_steps else 'configure'
@@ -39,10 +37,8 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     @api.multi
-    def action_wizard_product_template_configurator(self):
-        """ Creates and launches a product configurator wizard with a linked
-        template and variant in order to re-configure a existing product. It is
-        esetially a shortcut to pre-fill configuration data of a variant"""
+    def reconfigure_product_template(self):
+        """ Copied from product_configurator_wizard.sale.py """
 
         cfg_steps = self.config_step_line_ids
         active_step = str(cfg_steps[0].id) if cfg_steps else 'configure'
@@ -52,6 +48,7 @@ class ProductTemplate(models.Model):
             'product_tmpl_id': self.id,
             'state': active_step,
         })
+        # Had to remove default_type because while creating mrp.bom it was taking type from product.template context
         ctx_no_type = self._context.copy()
         ctx_no_type.pop('default_type', None)
         return {

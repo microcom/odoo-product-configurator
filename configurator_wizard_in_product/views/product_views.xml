@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     
-    <record id="action_wizard_product_template_configurator" model="ir.actions.act_window">
-        <field name="name">Configure Product</field>
-        <field name="res_model">product.configurator</field>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="product_configurator_wizard.product_configurator_form"/>
-        <field name="target">new</field>
-    </record>
-
     <record id="product_template_only_form_view" model="ir.ui.view">
         <field name="name">product.template.product.form</field>
         <field name="model">product.template</field>
@@ -16,7 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//div[@name='options']" position="inside">
                 <div>
-                    <button name="action_wizard_product_template_configurator"
+                    <button name="reconfigure_product_template"
                             type="object"
                             class="oe_highlight"
                             string="Configure Product"
@@ -33,7 +25,7 @@
         <field name="inherit_id" ref="product.product_normal_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='attribute_value_ids']" position="before">
-                <button name="reconfigure_product" groups="product_configurator.group_product_configurator"
+                <button name="reconfigure_product_variant" groups="product_configurator.group_product_configurator"
                         help="Reconfigure"
                         icon="fa-cogs"
                         type="object"

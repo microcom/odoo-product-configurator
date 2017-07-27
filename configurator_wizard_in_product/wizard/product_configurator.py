@@ -46,7 +46,7 @@ class ProductConfigurator(models.TransientModel):
     @api.multi
     def action_config_done(self):
         """This function is copied from product_configurator_wizard.ProductConfigurator
-           added this function to check active_model=='product.template' to ignore running unnecessary code"""
+           added this function to check active_model=='product.template' to ignore running not necessary code"""
         custom_vals = {
             l.attribute_id.id:
                 l.value or l.attachment_ids for l in self.custom_value_ids
@@ -92,9 +92,11 @@ class ProductConfigurator(models.TransientModel):
             order = self.env['purchase.order'].browse(self.env.context.get('active_id'))
             line_vals = {'product_id': variant.id, 'date_planned': datetime.today().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                          'product_uom': uom, 'price_unit': price, 'product_qty': 1}
+        # Changes start
         elif self.env.context.get('active_model') == 'product.template':
             self.unlink()
             return
+        # Changes end
         else:
             order = self.env['sale.order'].browse(self.env.context.get('active_id'))
             line_vals = {'product_id': variant.id}
