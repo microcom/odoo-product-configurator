@@ -77,6 +77,9 @@ class ProductConfigurator(models.TransientModel):
                 _('Changing the product template while having an active '
                   'configuration will erase reset/clear all values')
             )
+        tmpl_domain = self.env.context.get('tmpl_domain')
+        if tmpl_domain:
+            return {'domain': {'product_tmpl_id': tmpl_domain}}
 
     def get_onchange_domains(self, values, cfg_val_ids):
         """Generate domains to be returned by onchange method in order
