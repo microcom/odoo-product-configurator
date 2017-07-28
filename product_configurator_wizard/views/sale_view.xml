@@ -9,6 +9,7 @@
         <field name="view_mode">form</field>
         <field name="view_id" ref="product_configurator_form"/>
         <field name="target">new</field>
+        <field name="context">{'tmpl_domain': [("sale_ok", "=", True)]}</field>
     </record>
 
     <record id="sale_order_form_config" model="ir.ui.view">
