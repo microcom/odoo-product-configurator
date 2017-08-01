@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class ProductProduct(models.Model):
@@ -8,6 +8,7 @@ class ProductProduct(models.Model):
 
     name_override = fields.Char('Custom Name')
     hidden_attribute_value_ids = fields.Many2many('product.attribute.value', string='Hidden Attributes', compute='_compute_hidden')
+    attribute_description = fields.Html('Attributes Description', compute='_compute_attribute_description')
 
     def _compute_hidden(self):
         for product in self:
@@ -19,6 +20,25 @@ class ProductProduct(models.Model):
                         if value.attribute_id.name == key:
                             hidden_ids += value
             product.hidden_attribute_value_ids = hidden_ids
+
+    def _compute_attribute_description(self):
+        for product in self.sudo():
+            # prefetch values
+            value_dict = {}
+            for value in self.attribute_value_ids:
+                old_value = value_dict.get(value.attribute_id.name)
+                if old_value:
+                    value_dict[value.attribute_id.name] = ', '.join([old_value, value.name])
+                else:
+                    value_dict[value.attribute_id.name] = value.name
+            # assemble variant
+            novalue = _('<span style="color: #a8a8a8;">None</span>')  # @odoo-main-color-muted: #a8a8a8;
+            name_elements = []
+            for line in self.attribute_line_ids.sorted('sequence'):
+                key = line.attribute_id.name
+                value = value_dict.get(key, novalue)
+                name_elements.append(u'<li><strong>{}:</strong> {}</li>'.format(key, value))
+            product.attribute_description = u'<ul>{}</ul>'.format(u''.join(name_elements))
 
     @api.multi
     def name_get(self):
