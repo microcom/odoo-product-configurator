@@ -3,7 +3,7 @@
 from lxml import etree
 
 from odoo.osv import orm
-from odoo import models, api
+from odoo import api, models, _
 from odoo.exceptions import Warning
 
 
@@ -105,11 +105,11 @@ class ProductConfigurator(models.TransientModel):
         fields = self.fields_get()
         dynamic_fields = {
             k: v for k, v in fields.iteritems()
-                if k.startswith(self.field_prefix)
-                or k.startswith(self.custom_field_prefix)
-                # CHANGES START
-                or k.startswith(self.mode_prefix)
-                # CHANGES END
+            if k.startswith(self.field_prefix)
+            or k.startswith(self.custom_field_prefix)
+            # CHANGES START
+            or k.startswith(self.mode_prefix)
+            # CHANGES END
         }
 
         res['fields'].update(dynamic_fields)
@@ -337,7 +337,6 @@ class ProductConfigurator(models.TransientModel):
 
         dynamic_fields = mode_attr_vals
         fields = [f for f in fields if f not in dynamic_fields]
-        dynamic_vals = {}
 
         res = super(ProductConfigurator, self).read(fields=fields, load=load)
 

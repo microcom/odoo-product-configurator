@@ -49,9 +49,9 @@ class ProductProduct(models.Model):
             supplier_code = self._context.get('display_default_code', True) and d.get('supplier_code', False) or False
             default_code = self._context.get('display_default_code', True) and d.get('default_code', False) or False
             if supplier_code:
-                name = '[%s] %s' % (supplier_code,name) 
+                name = '[%s] %s' % (supplier_code, name)
             if default_code:
-                name = '[%s] %s' % (default_code,name)
+                name = '[%s] %s' % (default_code, name)
             return (d['id'], name)
 
         partner_id = self._context.get('partner_id')
@@ -89,7 +89,7 @@ class ProductProduct(models.Model):
                         if key in value_dict:
                             value = value_dict[key]
                         else:
-                             continue
+                            continue
                         if line.display_mode == 'value':
                             name_elements.append(u'{}'.format(value))
                         elif line.display_mode == 'attribute':
@@ -130,20 +130,19 @@ class ProductProduct(models.Model):
                         variant and "%s, %s" % (s.product_name, variant) or s.product_name
                         ) or False
                     mydict = {
-                              'id': product.id,
-                              'name': seller_variant or name,
-                              'default_code' : product.default_code or '',
-                              'supplier_code': s.product_code or ''
-                              
-                              }
+                        'id': product.id,
+                        'name': seller_variant or name,
+                        'default_code': product.default_code or '',
+                        'supplier_code': s.product_code or ''
+                        }
                     temp = _name_get(mydict)
                     if temp not in result:
                         result.append(temp)
             else:
                 mydict = {
-                          'id': product.id,
-                          'name': name,
-                          'default_code': product.default_code,
-                          }
+                    'id': product.id,
+                    'name': name,
+                    'default_code': product.default_code,
+                    }
                 result.append(_name_get(mydict))
         return result
