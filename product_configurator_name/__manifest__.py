@@ -16,6 +16,7 @@
     ],
     "data": [
         'views/product_view.xml',
+        'wizard/product_configurator_view.xml'
     ],
     'demo': [
     ],
