@@ -904,51 +904,28 @@ class ProductConfigurator(models.TransientModel):
         # In the meantime, at least make sure that a validation
         # error legitimately raised in a nested routine
         # is passed through.
-        domain = [['product_tmpl_id', '=', self.product_tmpl_id.id]]
+        try:
+            variant = self.product_tmpl_id.create_get_variant(
+                self.value_ids.ids, custom_vals)
+        except ValidationError:
+            raise
+        except:
+            raise ValidationError(
+                _('Invalid configuration! Please check all '
+                  'required steps and fields.')
+            )
 
-        template_products = self.env['product.product'].search(domain)
-        product_found = False
+        so = self.env['sale.order'].browse(self.env.context.get('active_id'))
 
-        if self.product_tmpl_id.reuse_variant:
-            for product in template_products:
-                if product.attribute_value_ids == self.value_ids:
-                    product_found = product
-                    break
-
-        if product_found:
-            variant = product_found
-            price = product_found.standard_price
-            uom = product_found.uom_id.id
-        else:
-            try:
-                variant = self.product_tmpl_id.create_variant(
-                    self.value_ids.ids, custom_vals)
-                price = self.product_tmpl_id.standard_price
-                uom = self.product_tmpl_id.uom_id.id
-            except ValidationError:
-                raise
-            except:
-                raise ValidationError(
-                    _('Invalid configuration! Please check all '
-                      'required steps and fields.')
-                )
-
-        if self.env.context.get('active_model') == 'purchase.order':
-            order = self.env['purchase.order'].browse(self.env.context.get('active_id'))
-            line_vals = {'product_id': variant.id, 'date_planned': datetime.today().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-                         'product_uom': uom, 'price_unit': price, 'product_qty': 1}
-        else:
-            order = self.env['sale.order'].browse(self.env.context.get('active_id'))
-            line_vals = {'product_id': variant.id}
-
+        line_vals = {'product_id': variant.id}
         line_vals.update(self._extra_line_values(
-            self.order_line_id.order_id or order, variant, new=True)
+            self.order_line_id.order_id or so, variant, new=True)
         )
 
         if self.order_line_id:
             self.order_line_id.write(line_vals)
         else:
-            order.write({'order_line': [(0, 0, line_vals)]})
+            so.write({'order_line': [(0, 0, line_vals)]})
 
         self.unlink()
         return

@@ -45,41 +45,37 @@ class ProductConfigurator(models.TransientModel):
 
     @api.multi
     def action_config_done(self):
-        """This function is copied from product_configurator_wizard.ProductConfigurator
-           added this function to check active_model=='product.template' to ignore running not necessary code"""
-        custom_vals = {
-            l.attribute_id.id:
-                l.value or l.attachment_ids for l in self.custom_value_ids
-        }
+        """ rebuilt from original """
+        if self.env.context.get('active_model') in ('product.template', 'product.product'):
+            custom_values = {
+                l.attribute_id.id:
+                    l.value or l.attachment_ids for l in self.custom_value_ids
+            }
+            duplicates = self.product_tmpl_id.search_variant(
+                self.value_ids.ids, custom_values=custom_values)
+            if duplicates:
+                raise ValidationError(
+                    _('Duplicate configuration! This variant already exists.')
+                )
 
-        # This try except is too generic.
-        # The create_variant routine could effectively fail for
-        # a large number of reasons, including bad programming.
-        # It should be refactored.
-        # In the meantime, at least make sure that a validation
-        # error legitimately raised in a nested routine
-        # is passed through.
-        domain = [['product_tmpl_id', '=', self.product_tmpl_id.id]]
-
-        template_products = self.env['product.product'].search(domain)
-        product_found = False
-
-        if self.product_tmpl_id.reuse_variant:
-            for product in template_products:
-                if product.attribute_value_ids == self.value_ids:
-                    product_found = product
-                    break
-
-        if product_found:
-            variant = product_found
-            price = product_found.standard_price
-            uom = product_found.uom_id.id
-        else:
+            # This try except is too generic.
+            # The create_variant routine could effectively fail for
+            # a large number of reasons, including bad programming.
+            # It should be refactored.
+            # In the meantime, at least make sure that a validation
+            # error legitimately raised in a nested routine
+            # is passed through.
             try:
-                variant = self.product_tmpl_id.create_variant(
-                    self.value_ids.ids, custom_vals)
-                price = self.product_tmpl_id.standard_price
-                uom = self.product_tmpl_id.uom_id.id
+                if self.env.context.get('active_model') == 'product.product':
+                    # extracted from create_get_variant
+                    valid = self.validate_configuration(value_ids, custom_values)
+                    if not valid:
+                        raise ValidationError(_('Invalid Configuration'))
+                    vals = self.get_variant_vals(value_ids, custom_values)
+                    self.product_id.write(vals)
+                else:
+                    variant = self.product_tmpl_id.create_get_variant(
+                        self.value_ids.ids, custom_values)
             except ValidationError:
                 raise
             except:
@@ -88,27 +84,7 @@ class ProductConfigurator(models.TransientModel):
                       'required steps and fields.')
                 )
 
-        if self.env.context.get('active_model') == 'purchase.order':
-            order = self.env['purchase.order'].browse(self.env.context.get('active_id'))
-            line_vals = {'product_id': variant.id, 'date_planned': datetime.today().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-                         'product_uom': uom, 'price_unit': price, 'product_qty': 1}
-        # Changes start
-        elif self.env.context.get('active_model') == 'product.template':
             self.unlink()
             return
-        # Changes end
         else:
-            order = self.env['sale.order'].browse(self.env.context.get('active_id'))
-            line_vals = {'product_id': variant.id}
-
-        line_vals.update(self._extra_line_values(
-            self.order_line_id.order_id or order, variant, new=True)
-        )
-
-        if self.order_line_id:
-            self.order_line_id.write(line_vals)
-        else:
-            order.write({'order_line': [(0, 0, line_vals)]})
-
-        self.unlink()
-        return
+            return super(ProductConfigurator, self).action_config_done()
