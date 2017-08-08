@@ -12,10 +12,11 @@
     'license': 'AGPL-3',
     'website': 'http://www.microcom.ca/',
     'depends': [
-        'product_configurator',
+        'product_configurator_wizard',
     ],
     "data": [
         'views/product_view.xml',
+        'wizard/product_configurator_view.xml'
     ],
     'demo': [
     ],

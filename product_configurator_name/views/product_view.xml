@@ -59,6 +59,13 @@
                     <field name="name_override"/>
                 </group>
             </group>
+            <notebook position="inside">
+                <page string="Attributes">
+                    <group>
+                        <field name="attribute_description"/>
+                    </group>
+                </page>
+            </notebook>
         </field>
     </record>
 
