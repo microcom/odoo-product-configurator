@@ -15,7 +15,7 @@ class ProductConfigurator(models.TransientModel):
     @api.multi
     def action_config_done(self):
         """ rebuilt from original """
-        if self.env.context.get('active_model') == 'purchase.order':
+        if self.env.context.get('active_model') in ('purchase.order', 'purchase.order.line'):
             # same behavior as sale.order
             custom_vals = {
                 l.attribute_id.id:
@@ -39,16 +39,15 @@ class ProductConfigurator(models.TransientModel):
                     _('Invalid configuration! Please check all '
                       'required steps and fields.')
                 )
-
-            po = self.env['purchase.order'].browse(self.env.context.get('active_id'))
-
             line_vals = {'product_id': variant.id}
-            # Instead of passing None as a first argument now changed to po
-            line_vals.update(self._extra_line_values(po, variant, new=True))
 
             if self.purchase_order_line_id:
+                line_vals.update(self._extra_line_values(self.purchase_order_line_id.order_id, variant, new=True))
                 self.purchase_order_line_id.write(line_vals)
             else:
+                # Instead of passing None as a first argument now changed to po
+                po = self.env['purchase.order'].browse(self.env.context.get('active_id'))
+                line_vals.update(self._extra_line_values(po, variant, new=True))
                 # Changes start
                 # Copied from sale.py - def create() to run onchange explicitly
                 onchange_fields = ['name', 'default_code', 'vendor_default_code', 'vendor_default_code_display',
