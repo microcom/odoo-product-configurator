@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, api, _
-from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.exceptions import ValidationError
-from datetime import datetime
 
 
 class ProductConfigurator(models.TransientModel):
@@ -66,15 +64,16 @@ class ProductConfigurator(models.TransientModel):
             # error legitimately raised in a nested routine
             # is passed through.
             try:
-                if self.env.context.get('active_model') == 'product.product':
+                if self.product_id and self.product_tmpl_id:
                     # extracted from create_get_variant
-                    valid = self.validate_configuration(value_ids, custom_values)
+                    value_ids = self.value_ids.ids
+                    valid = self.env['product.template'].validate_configuration(value_ids, custom_values)
                     if not valid:
                         raise ValidationError(_('Invalid Configuration'))
-                    vals = self.get_variant_vals(value_ids, custom_values)
+                    vals = self.product_tmpl_id.get_variant_vals(value_ids, custom_values)
                     self.product_id.write(vals)
                 else:
-                    variant = self.product_tmpl_id.create_get_variant(
+                    self.product_tmpl_id.create_get_variant(
                         self.value_ids.ids, custom_values)
             except ValidationError:
                 raise

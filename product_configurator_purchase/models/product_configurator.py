@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class ProductConfigurator(models.TransientModel):
@@ -42,19 +43,23 @@ class ProductConfigurator(models.TransientModel):
             po = self.env['purchase.order'].browse(self.env.context.get('active_id'))
 
             line_vals = {'product_id': variant.id}
-            # SO is not used, passing None
-            line_vals.update(self._extra_line_values(None, variant, new=True))
+            # Instead of passing None as a first argument now changed to po
+            line_vals.update(self._extra_line_values(po, variant, new=True))
 
             if self.purchase_order_line_id:
                 self.purchase_order_line_id.write(line_vals)
             else:
-                line_vals.update({
-                    # taken from PurchaseOrderLine.onchange_product_id()
-                    'date_planned': datetime.today().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-                    'product_uom': variant.uom_po_id.id or variant.uom_id.id,
-                    'price_unit': variant.standard_price,
-                    'product_qty': 1
-                })
+                # Changes start
+                # Copied from sale.py - def create() to run onchange explicitly
+                onchange_fields = ['name', 'default_code', 'vendor_default_code', 'vendor_default_code_display',
+                                   'price_unit', 'product_qty', 'taxes_id', 'product_uom', 'date_planned']
+                line_vals['order_id'] = po.id
+                line = self.env['purchase.order.line'].new(line_vals)
+                line.onchange_product_id()
+                for field in onchange_fields:
+                    if field not in line_vals:
+                        line_vals[field] = line._fields[field].convert_to_write(line[field], line)
+                # Changes ends
                 po.write({'order_line': [(0, 0, line_vals)]})
 
             self.unlink()

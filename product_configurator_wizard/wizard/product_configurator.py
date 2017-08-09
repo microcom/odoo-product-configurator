@@ -2,11 +2,9 @@
 
 from lxml import etree
 
-from datetime import datetime
 from odoo.osv import orm
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning, ValidationError
-from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class FreeSelection(fields.Selection):
@@ -561,7 +559,6 @@ class ProductConfigurator(models.TransientModel):
                     attrs['required'].append(
                         (dependee_field, 'in', list(val_ids)))
 
-
             # Create the new field in the view
             node = etree.Element(
                 "field",
@@ -921,7 +918,6 @@ class ProductConfigurator(models.TransientModel):
         line_vals.update(self._extra_line_values(
             self.order_line_id.order_id or so, variant, new=True)
         )
-
         if self.order_line_id:
             self.order_line_id.write(line_vals)
         else:
