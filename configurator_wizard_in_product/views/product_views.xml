@@ -29,10 +29,11 @@
                         help="Reconfigure"
                         icon="fa-cogs"
                         type="object"
+                        style="background-color:white"
                 />
             </xpath>
             <xpath expr="//field[@name='attribute_value_ids']" position="attributes">
-                <attribute name="readonly">1</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
         </field>
     </record>

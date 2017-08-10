@@ -42,11 +42,15 @@ class ProductConfigurator(models.TransientModel):
             line_vals = {'product_id': variant.id}
 
             if self.purchase_order_line_id:
-                # Instead of passing None, passing order id
+                # def _extra_line_values in product_configurator_wizard.product_configurator.py refers to just so
+                # We have overwrite this function in airpura_product_configurator.product_attribute.py and which refers to
+                # both po and so  
                 line_vals.update(self._extra_line_values(self.purchase_order_line_id.order_id, variant, new=True))
                 self.purchase_order_line_id.write(line_vals)
             else:
-                # Instead of passing None as a first argument now changed to po
+                # def _extra_line_values in product_configurator_wizard.product_configurator.py refers to just so
+                # We have overwrite this function in airpura_product_configurator.product_attribute.py and which refers to
+                # both po and so
                 po = self.env['purchase.order'].browse(self.env.context.get('active_id'))
                 line_vals.update(self._extra_line_values(po, variant, new=True))
                 # Changes start
