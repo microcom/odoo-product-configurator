@@ -42,6 +42,7 @@ class ProductConfigurator(models.TransientModel):
             line_vals = {'product_id': variant.id}
 
             if self.purchase_order_line_id:
+                # Instead of passing None, passing order id
                 line_vals.update(self._extra_line_values(self.purchase_order_line_id.order_id, variant, new=True))
                 self.purchase_order_line_id.write(line_vals)
             else:

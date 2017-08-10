@@ -31,7 +31,9 @@
                         type="object"
                 />
             </xpath>
-
+            <xpath expr="//field[@name='attribute_value_ids']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
         </field>
     </record>
 

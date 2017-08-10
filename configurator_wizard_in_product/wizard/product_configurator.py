@@ -30,12 +30,12 @@ class ProductConfigurator(models.TransientModel):
             open_steps = open_lines.mapped(
                 lambda x: (str(x.id), x.config_step_id.name)
             )
-            if self.env.context.get('active_model') == 'product.template':
+            if self.env.context.get('active_model') in ('product.template', 'product.product'):
                 steps = open_steps if (wiz.product_id or wiz.product_tmpl_id) else steps + open_steps
             else:
                 steps = open_steps if wiz.product_id else steps + open_steps
         else:
-            if self.env.context.get('active_model') == 'product.template':
+            if self.env.context.get('active_model') in ('product.template', 'product.product'):
                 steps = [('configure', 'Configure')]
             else:
                 steps.append(('configure', 'Configure'))
@@ -64,10 +64,10 @@ class ProductConfigurator(models.TransientModel):
             # error legitimately raised in a nested routine
             # is passed through.
             try:
-                if self.product_id and self.product_tmpl_id:
+                if self.product_id:
                     # extracted from create_get_variant
                     value_ids = self.value_ids.ids
-                    valid = self.env['product.template'].validate_configuration(value_ids, custom_values)
+                    valid = self.product_tmpl_id.validate_configuration(value_ids, custom_values)
                     if not valid:
                         raise ValidationError(_('Invalid Configuration'))
                     vals = self.product_tmpl_id.get_variant_vals(value_ids, custom_values)
