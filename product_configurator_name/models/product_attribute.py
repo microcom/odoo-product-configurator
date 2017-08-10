@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import fields, models
 
 DISPLAY_SELECTION = [('hide', 'Hide'), ('value', 'Only Value'), ('attribute', 'With Label')]
 
@@ -8,7 +8,6 @@ DISPLAY_SELECTION = [('hide', 'Hide'), ('value', 'Only Value'), ('attribute', 'W
 class ProductAttributeLine(models.Model):
     _inherit = 'product.attribute.line'
     _order = 'product_tmpl_id, sequence, id'
-
 
     sequence = fields.Integer(string='Sequence', default=10)
     display_mode = fields.Selection(DISPLAY_SELECTION, default='value', required=True)
