@@ -31,6 +31,7 @@ class PurchaseOrderLine(models.Model):
 
         wizard_obj = self.env['product.configurator']
         wizard = wizard_obj.create({
+            'modify_variant': wizard_obj.get_modify_variant_setting(),
             'product_id': self.product_id.id,
             'state': active_step,
             'purchase_order_line_id': self.id,
