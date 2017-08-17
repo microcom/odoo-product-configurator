@@ -1,3 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from . import purchase, product_configurator
+from . import product_configurator
+from . import purchase
+from . import res_config

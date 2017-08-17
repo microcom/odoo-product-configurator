@@ -303,11 +303,6 @@ class ProductConfigurator(models.TransientModel):
     modify_variant = fields.Boolean('Modify Variant', default=False)
 
     @api.model
-    def get_modify_variant_setting(self):
-        # TODO get from settings
-        return True
-
-    @api.model
     def fields_get(self, allfields=None, attributes=None):
         """ Artificially inject fields which are dynamically created using the
         attribute_ids on the product.template as reference"""
