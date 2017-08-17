@@ -928,7 +928,8 @@ class ProductConfigurator(models.TransientModel):
 
                 if duplicates - self.product_id:
                     raise ValidationError(
-                        _('Duplicate configuration! This variant already exists.')
+                        _("Configurable Products cannot have duplicates "
+                          "(identical attribute values)")
                     )
 
                 vals = self.product_tmpl_id.get_variant_vals(value_ids, custom_values)

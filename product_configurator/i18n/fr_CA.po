@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-05-30 20:00+0000\n"
-"PO-Revision-Date: 2017-05-30 16:13-0400\n"
+"PO-Revision-Date: 2017-08-17 15:07-0400\n"
 "Last-Translator: Stéphane Le Cornec <slc@microcom.ca>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -40,6 +40,11 @@ msgid "Allow selection of multiple values for this attribute?"
 msgstr "Permettre la sélection de plusieurs valeurs pour cette caractéristique?"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_domain_id
+msgid "Applied If"
+msgstr "Appliquée si"
+
+#. module: product_configurator
 #: selection:product.attribute,custom_type:0
 msgid "Attachment"
 msgstr "Pièce Jointe"
@@ -51,12 +56,23 @@ msgid "Attachments"
 msgstr "Pièces jointes"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_attr_line_val_ids
+msgid "Attr line val ids"
+msgstr "Attr line val ids"
+
+#. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_attribute_value_custom_attribute_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_line_attribute_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_custom_value_attribute_id
 #: model:ir.ui.view,arch_db:product_configurator.product_attribute_value_custom_tree
 msgid "Attribute"
 msgstr "Caractéristique"
+
+#. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_product_config_default_ids
+#: model:ir.model.fields,field_description:product_configurator.field_product_template_config_default_ids
+msgid "Attribute Defaults"
+msgstr "Attribut par défaut"
 
 #. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_product_config_line_ids
@@ -76,6 +92,11 @@ msgstr "Lignes de caractéristique"
 
 #. module: product_configurator
 #: model:ir.ui.view,arch_db:product_configurator.product_template_form_view
+msgid "Attribute Value Defaults"
+msgstr "Valeur par défaut"
+
+#. module: product_configurator
+#: model:ir.ui.view,arch_db:product_configurator.product_template_form_view
 msgid "Attribute Value Dependencies"
 msgstr "Dépendances de valeur de caractéristique"
 
@@ -85,13 +106,13 @@ msgid "Attribute Values"
 msgstr "Valeurs de caractéristique"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product_config.py:510
+#: code:addons/product_configurator/models/product_config.py:580
 #, python-format
 msgid "Attribute custom type is binary, attachments are the only accepted values with this custom field type"
 msgstr "Caractéristique binaire, les pièces jointes sont les seules valeurs acceptées avec ce type de champ personnalisé"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product_config.py:515
+#: code:addons/product_configurator/models/product_config.py:585
 #, python-format
 msgid "Attribute custom type must be 'binary' for saving attachments to custom value"
 msgstr "La caractéristique doit être binaire pour l’enregistrement des pièces jointes au champ personnalisé"
@@ -118,7 +139,7 @@ msgid "Can create value on the fly"
 msgstr "Peut créer de la valeur à la volée"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product_config.py:269
+#: code:addons/product_configurator/models/product_config.py:339
 #, python-format
 msgid "Cannot have a configuration step defined twice."
 msgstr "Ne peut pas avoir une étape de configuration défini deux fois."
@@ -149,6 +170,12 @@ msgid "Configurable Products"
 msgstr "Articles configurables"
 
 #. module: product_configurator
+#: code:addons/product_configurator/models/product.py:614
+#, python-format
+msgid "Configurable Products cannot have duplicates (identical attribute values)"
+msgstr "Les produits configurables ne peut pas avoir de doublons (valeurs d’attributs identiques)"
+
+#. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_product_tmpl_id
 msgid "Configurable Template"
 msgstr "Modèle configurable"
@@ -168,6 +195,11 @@ msgstr "Variantes configurables"
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_image_value_ids
 msgid "Configuration"
 msgstr "Configuration"
+
+#. module: product_configurator
+#: model:ir.ui.view,arch_db:product_configurator.product_template_form_view
+msgid "Configuration Defaults"
+msgstr "Configuration Defaults"
 
 #. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_product_config_image_ids
@@ -224,7 +256,7 @@ msgid "Configuration Values"
 msgstr "Valeurs de configuration"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product_config.py:491
+#: code:addons/product_configurator/models/product_config.py:561
 #, python-format
 msgid "Configuration cannot have the same value inserted twice"
 msgstr "Configuration ne peut pas avoir la même valeur insérée deux fois"
@@ -240,12 +272,13 @@ msgid "Configured Variants"
 msgstr "Variantes configurées"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product.py:509
+#: code:addons/product_configurator/models/product.py:643
 #, python-format
 msgid "Could not convert custom value '%s' to '%s' on product variant: '%s'"
 msgstr "Pas pu convertir la valeur personnalisée « %s » à « %s » sur la variante de l'article: « %s »"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_create_uid
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_create_uid
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_create_uid
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_create_uid
@@ -253,6 +286,7 @@ msgid "Created by"
 msgstr "Créé par"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_create_date
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_create_date
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_create_date
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_create_date
@@ -298,6 +332,11 @@ msgid "DateTime"
 msgstr "DateTime"
 
 #. module: product_configurator
+#: model:ir.model.fields,help:product_configurator.field_product_config_default_domain_id
+msgid "Default will be attempted if this rule passes, or leave blank for a generic default"
+msgstr "Choisir cette valeur par défaut si la règle passe, ne pas mettre de règle pour toujours choisir"
+
+#. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_attribute_description
 msgid "Description"
 msgstr "Description"
@@ -309,6 +348,7 @@ msgstr "Détermine la valeur requise de cette caractéristique, mais il peut êt
 
 #. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_attribute_value_custom_display_name
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_display_name
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_display_name
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_line_display_name
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_image_display_name
@@ -341,6 +381,7 @@ msgid "Float"
 msgstr "Float"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_id
@@ -365,8 +406,8 @@ msgid "Integer"
 msgstr "Integer"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product.py:347
-#: code:addons/product_configurator/models/product_config.py:439
+#: code:addons/product_configurator/models/product.py:370
+#: code:addons/product_configurator/models/product_config.py:509
 #, python-format
 msgid "Invalid Configuration"
 msgstr "Configuration non valide"
@@ -383,6 +424,7 @@ msgstr "Caractéristique requise?"
 
 #. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_attribute_value_custom___last_update
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default___last_update
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain___last_update
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_line___last_update
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_image___last_update
@@ -395,6 +437,7 @@ msgid "Last Modified on"
 msgstr "Dernière Modification le"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_write_uid
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_write_uid
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_write_uid
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_write_uid
@@ -402,6 +445,7 @@ msgid "Last Updated by"
 msgstr "Dernière mise à jour par"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_write_date
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_write_date
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_write_date
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_write_date
@@ -479,6 +523,7 @@ msgstr "Article ID"
 
 #. module: product_configurator
 #: model:ir.model,name:product_configurator.model_product_template
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_product_tmpl_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_line_product_tmpl_id
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_line_product_tmpl_id
 msgid "Product Template"
@@ -558,6 +603,8 @@ msgstr "Valeur personnalisée sélectionnée « %s » doit être inférieure �
 
 #. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_attribute_line_sequence
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_sequence
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_line_sequence
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_image_sequence
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_line_sequence
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_step_line_sequence
@@ -568,6 +615,11 @@ msgstr "Séquence"
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_custom_value_cfg_session_id
 msgid "Session"
 msgstr "Session"
+
+#. module: product_configurator
+#: model:ir.model.fields,help:product_configurator.field_product_config_domain_line_sequence
+msgid "Set the order of operations for evaluation domain lines"
+msgstr "Set the order of operations for evaluation domain lines"
 
 #. module: product_configurator
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_session_state
@@ -626,19 +678,20 @@ msgid "Value ids"
 msgstr "Value ids"
 
 #. module: product_configurator
+#: model:ir.model.fields,field_description:product_configurator.field_product_config_default_value_ids
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_domain_line_value_ids
 #: model:ir.model.fields,field_description:product_configurator.field_product_config_line_value_ids
 msgid "Values"
 msgstr "Valeurs"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product_config.py:214
+#: code:addons/product_configurator/models/product_config.py:284
 #, python-format
 msgid "Values entered for line '%s' generate a incompatible configuration"
 msgstr "Les valeurs entrées pour la ligne « %s » génèrent une configuration incompatible"
 
 #. module: product_configurator
-#: code:addons/product_configurator/models/product_config.py:177
+#: code:addons/product_configurator/models/product_config.py:194
 #, python-format
 msgid "Values must belong to the attribute of the corresponding attribute_line set on the configuration line"
 msgstr "Les valeurs doivent appartenir à la caractéristique correspondante sur la ligne de configuration"
@@ -662,6 +715,11 @@ msgstr "product.attribute.value"
 #: model:ir.model,name:product_configurator.model_product_attribute_value_custom
 msgid "product.attribute.value.custom"
 msgstr "product.attribute.value.custom"
+
+#. module: product_configurator
+#: model:ir.model,name:product_configurator.model_product_config_default
+msgid "product.config.default"
+msgstr "product.config.default"
 
 #. module: product_configurator
 #: model:ir.model,name:product_configurator.model_product_config_domain
