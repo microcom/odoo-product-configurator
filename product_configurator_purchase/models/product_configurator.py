@@ -26,8 +26,7 @@ class ProductConfigurator(models.TransientModel):
                 line_vals.update(self._extra_line_values(po, variant, new=True))
                 # Changes start
                 # Copied from sale.py - def create() to run onchange explicitly
-                onchange_fields = ['name', 'default_code', 'vendor_default_code', 'vendor_default_code_display',
-                                   'price_unit', 'product_qty', 'taxes_id', 'product_uom', 'date_planned']
+                onchange_fields = ['name', 'price_unit', 'product_qty', 'taxes_id', 'product_uom', 'date_planned']
                 line_vals['order_id'] = po.id
                 line = self.env['purchase.order.line'].new(line_vals)
                 line.onchange_product_id()
