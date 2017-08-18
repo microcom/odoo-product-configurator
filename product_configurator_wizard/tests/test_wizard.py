@@ -122,6 +122,34 @@ class ConfigurationRules(TransactionCase):
         self.assertTrue(len(config_variants) == 2,
                         "Wizard reconfiguration did not create a new variant")
 
+    def test_reconfiguration_with_modify_variant(self):
+        self.env.user.company_id.modify_variant = True
+        self.test_wizard_configuration()
+
+        order_line = self.so.order_line.filtered(
+            lambda l: l.product_id.config_ok
+        )
+
+        reconfig_action = order_line.reconfigure_product()
+
+        wizard = self.env['product.configurator'].browse(
+            reconfig_action.get('res_id')
+        )
+
+        attr_vals = self.get_attr_values(['diesel', '220d'])
+        self.wizard_write_proceed(wizard, attr_vals)
+
+        # Cycle through steps until wizard ends
+        while wizard.action_next_step():
+            pass
+
+        config_variants = self.env['product.product'].search([
+            ('config_ok', '=', True)
+        ])
+
+        self.assertTrue(len(config_variants) == 1,
+                        "Wizard reconfiguration created a new variant")
+
     def test_wizard_domains(self):
         """Test product configurator wizard default values"""
 

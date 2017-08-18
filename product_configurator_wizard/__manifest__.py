@@ -9,10 +9,10 @@
     'website': 'http://www.pledra.com/',
     'depends': ['sale', 'product_configurator'],
     "data": [
+        'wizard/product_configurator_view.xml',
         'views/assets.xml',
         'views/res_config_views.xml',
         'views/sale_view.xml',
-        'wizard/product_configurator_view.xml',
     ],
     'images': [
         'static/description/cover.png'
