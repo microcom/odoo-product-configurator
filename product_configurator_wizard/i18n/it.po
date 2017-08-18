@@ -21,7 +21,7 @@ msgstr ""
 #. module: product_configurator_wizard
 #: code:addons/product_configurator_wizard/wizard/product_configurator.py:650
 #, python-format
-msgid "An error occursed while parsing value for attribute %s"
+msgid "An error occurred while parsing value for attribute %s"
 msgstr "Errore dll controllo dei valori per l'attributo %s"
 
 #. module: product_configurator_wizard
