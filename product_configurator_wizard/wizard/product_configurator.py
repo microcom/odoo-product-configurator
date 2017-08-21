@@ -2,11 +2,9 @@
 
 from lxml import etree
 
-from datetime import datetime
 from odoo.osv import orm
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning, ValidationError
-from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class FreeSelection(fields.Selection):
@@ -302,6 +300,7 @@ class ProductConfigurator(models.TransientModel):
         comodel_name='sale.order.line',
         readonly=True,
     )
+    modify_variant = fields.Boolean('Modify Variant', default=False)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -561,7 +560,6 @@ class ProductConfigurator(models.TransientModel):
                     attrs['required'].append(
                         (dependee_field, 'in', list(val_ids)))
 
-
             # Create the new field in the view
             node = etree.Element(
                 "field",
@@ -741,7 +739,7 @@ class ProductConfigurator(models.TransientModel):
                     field_val = vals[field_name]
                 else:
                     raise Warning(
-                        _('An error occursed while parsing value for '
+                        _('An error occurred while parsing value for '
                           'attribute %s' % attr_line.attribute_id.name)
                     )
                 attr_val_dict.update({
@@ -904,54 +902,70 @@ class ProductConfigurator(models.TransientModel):
         # In the meantime, at least make sure that a validation
         # error legitimately raised in a nested routine
         # is passed through.
-        domain = [['product_tmpl_id', '=', self.product_tmpl_id.id]]
+        try:
+            if self.modify_variant:
+                # adapted from create_get_variant()
+                # - duplicate raise an error
+                # - self.product_id is updated instead of creating a new variant
+                value_ids = self.value_ids.ids
+                custom_values = custom_vals
+                valid = self.product_tmpl_id.validate_configuration(value_ids, custom_values)
+                if not valid:
+                    raise ValidationError(_('Invalid Configuration'))
 
-        template_products = self.env['product.product'].search(domain)
-        product_found = False
+                duplicates = self.product_tmpl_id.search_variant(
+                    value_ids, custom_values=custom_values)
 
-        if self.product_tmpl_id.reuse_variant:
-            for product in template_products:
-                if product.attribute_value_ids == self.value_ids:
-                    product_found = product
-                    break
+                # At the moment, I don't have enough confidence with my understanding
+                # of binary attributes, so will leave these as not matching...
+                # In theory, they should just work, if they are set to "non search"
+                # in custom field def!
+                # TODO: Check the logic with binary attributes
+                if custom_values:
+                    value_custom_ids = self.product_tmpl_id.encode_custom_values(custom_values)
+                    if any('attachment_ids' in cv[2] for cv in value_custom_ids):
+                        duplicates = False
 
-        if product_found:
-            variant = product_found
-            price = product_found.standard_price
-            uom = product_found.uom_id.id
-        else:
-            try:
-                variant = self.product_tmpl_id.create_variant(
+                if duplicates - self.product_id:
+                    raise ValidationError(
+                        _("Configurable Products cannot have duplicates "
+                          "(identical attribute values)")
+                    )
+
+                vals = self.product_tmpl_id.get_variant_vals(value_ids, custom_values)
+
+                if self.product_id:
+                    self.product_id.write(vals)
+                    variant = self.product_id
+                else:
+                    variant = self.env['product.product'].create(vals)
+            else:
+                variant = self.product_tmpl_id.create_get_variant(
                     self.value_ids.ids, custom_vals)
-                price = self.product_tmpl_id.standard_price
-                uom = self.product_tmpl_id.uom_id.id
-            except ValidationError:
-                raise
-            except:
-                raise ValidationError(
-                    _('Invalid configuration! Please check all '
-                      'required steps and fields.')
-                )
+        except ValidationError:
+            raise
+        except:
+            raise ValidationError(
+                _('Invalid configuration! Please check all '
+                  'required steps and fields.')
+            )
 
-        if self.env.context.get('active_model') == 'purchase.order':
-            order = self.env['purchase.order'].browse(self.env.context.get('active_id'))
-            line_vals = {'product_id': variant.id, 'date_planned': datetime.today().strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-                         'product_uom': uom, 'price_unit': price, 'product_qty': 1}
-        else:
-            order = self.env['sale.order'].browse(self.env.context.get('active_id'))
-            line_vals = {'product_id': variant.id}
+        self.action_config_done_postprocess(variant)
+        self.unlink()
+        return
 
+    @api.multi
+    def action_config_done_postprocess(self, variant):
+        so = self.env['sale.order'].browse(self.env.context.get('active_id'))
+
+        line_vals = {'product_id': variant.id}
         line_vals.update(self._extra_line_values(
-            self.order_line_id.order_id or order, variant, new=True)
+            self.order_line_id.order_id or so, variant, new=True)
         )
-
         if self.order_line_id:
             self.order_line_id.write(line_vals)
         else:
-            order.write({'order_line': [(0, 0, line_vals)]})
-
-        self.unlink()
-        return
+            so.write({'order_line': [(0, 0, line_vals)]})
 
 
 class ProductConfiguratorCustomValue(models.TransientModel):

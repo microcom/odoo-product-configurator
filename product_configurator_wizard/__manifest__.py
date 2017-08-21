@@ -11,6 +11,7 @@
     "data": [
         'wizard/product_configurator_view.xml',
         'views/assets.xml',
+        'views/res_config_views.xml',
         'views/sale_view.xml',
     ],
     'images': [

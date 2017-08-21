@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="product_template_only_form_view" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='options']" position="inside">
+                <div>
+                    <button name="reconfigure_product_template"
+                            type="object"
+                            class="oe_highlight"
+                            string="Configure Product"
+                            groups="product_configurator.group_product_configurator"
+                    />
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_normal_form_view" model="ir.ui.view">
+        <field name="name">pproduct.product.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='attribute_value_ids']" position="before">
+                <button name="reconfigure_product_variant" groups="product_configurator.group_product_configurator"
+                        help="Reconfigure"
+                        icon="fa-cogs"
+                        type="object"
+                        style="background-color:white"
+                />
+            </xpath>
+            <xpath expr="//field[@name='attribute_value_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -22,6 +22,7 @@ class SaleOrderLine(models.Model):
 
         wizard_obj = self.env['product.configurator']
         wizard = wizard_obj.create({
+            'modify_variant': self.env.user.company_id.modify_variant,
             'product_id': self.product_id.id,
             'state': active_step,
             'order_line_id': self.id,
