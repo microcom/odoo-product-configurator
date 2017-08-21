@@ -301,6 +301,7 @@ class ProductConfigurator(models.TransientModel):
         readonly=True,
     )
     modify_variant = fields.Boolean('Modify Variant', default=False)
+    last_step = fields.Boolean('Last Step', default=False)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -813,6 +814,7 @@ class ProductConfigurator(models.TransientModel):
                 return self.action_config_done()
             else:
                 self.state = 'configure'
+                self.last_step = True
                 return wizard_action
 
         try:
@@ -830,6 +832,7 @@ class ProductConfigurator(models.TransientModel):
 
         if next_step:
             self.state = next_step.id
+            self.last_step = adjacent_steps.get('next_is_last')
         else:
             return self.action_config_done()
 
@@ -873,6 +876,7 @@ class ProductConfigurator(models.TransientModel):
 
         if previous_step:
             self.state = previous_step.id
+            self.last_step = False
         else:
             self.state = 'select'
 

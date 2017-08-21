@@ -29,8 +29,12 @@
                 </sheet>
                 <footer>
                     <field name="value_ids" invisible="1"/>
+                    <field name="last_step" readonly="1"/>
                     <button type="object" name="action_previous_step" attrs="{'invisible': [('state','=','select')]}" string="Back" special="no_save"/>
-                    <button type="object" name="action_next_step" class="oe_highlight" string="Next"/>
+                    <button type="object" name="action_next_step" class="oe_highlight" string="Next"
+                        attrs="{'invisible': [('last_step','=',True)]}"/>
+                    <button type="object" name="action_next_step" class="oe_highlight" string="Done"
+                        attrs="{'invisible': [('last_step','=',False)]}"/>
                 </footer>
             </form>
         </field>

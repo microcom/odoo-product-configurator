@@ -110,7 +110,9 @@ class ProductTemplate(models.Model):
                 adjacent_steps.update({
                     'next_step':
                         None if i + 1 == nr_steps else open_step_lines[i + 1],
-                    'previous_step': None if i == 0 else open_step_lines[i - 1]
+                    'previous_step': None if i == 0 else open_step_lines[i - 1],
+                    'next_is_last': i + 2 == nr_steps,
+                    'previous_is_first': i == 1
                 })
         return adjacent_steps
 
