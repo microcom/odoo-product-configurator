@@ -14,6 +14,11 @@ class ProductConfigurator(models.TransientModel):
     mode_prefix = '__mode-'
 
     @api.model
+    def is_dynamic_field(self, name):
+        res = super(ProductConfigurator, self).is_dynamic_field(name)
+        return res or name.startswith(self.mode_prefix)
+
+    @api.model
     def fields_get(self, allfields=None, attributes=None):
         """ Inject the mode fields """
         res = super(ProductConfigurator, self).fields_get(
@@ -79,65 +84,6 @@ class ProductConfigurator(models.TransientModel):
                 selection=DISPLAY_SELECTION
             )
 
-        return res
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form',
-                        toolbar=False, submenu=False):
-        """ override to add mode fields
-        """
-        # WARNING - super-duper hack to bypass super.fields_view_get()
-        # this is a rewrite, parent call cannot be executed
-        from odoo.addons.product_configurator_wizard.wizard.product_configurator import ProductConfigurator as SuperProductConfigurator
-        res = super(SuperProductConfigurator, self).fields_view_get(
-            view_id=view_id, view_type=view_type,
-            toolbar=toolbar, submenu=submenu
-        )
-
-        wizard_id = self.env.context.get('wizard_id')
-
-        if res.get('type') != 'form' or not wizard_id:
-            return res
-
-        wiz = self.browse(wizard_id)
-
-        # Get updated fields including the dynamic ones
-        fields = self.fields_get()
-        dynamic_fields = {
-            k: v for k, v in fields.iteritems()
-            if k.startswith(self.field_prefix)
-            or k.startswith(self.custom_field_prefix)
-            # CHANGES START
-            or k.startswith(self.mode_prefix)
-            # CHANGES END
-        }
-
-        res['fields'].update(dynamic_fields)
-        mod_view = self.add_dynamic_fields(res, dynamic_fields, wiz)
-
-        # Update result dict from super with modified view
-        res.update({'arch': etree.tostring(mod_view)})
-
-        # set any default values
-        wiz_vals = wiz.read(dynamic_fields.keys())[0]
-        dynamic_field_vals = {
-            k: wiz_vals.get(
-                k, [] if v['type'] == 'many2many' else False
-                )
-            for k, v in fields.iteritems()
-            if k.startswith(self.field_prefix)
-        }
-        domains = {k: dynamic_fields[k]['domain']
-                   for k in dynamic_field_vals.keys()}
-        try:
-            cfg_step_id = int(wiz.state)
-            cfg_step = wiz.product_tmpl_id.config_step_line_ids.filtered(
-                lambda x: x.id == cfg_step_id)
-        except:
-            cfg_step = self.env['product.config.step.line']
-        vals = wiz.get_form_vals(dynamic_field_vals, domains, cfg_step)
-        if vals:
-            wiz.write(vals)
         return res
 
     @api.model
