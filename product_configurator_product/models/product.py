@@ -12,6 +12,7 @@ class ProductProduct(models.Model):
 
         cfg_steps = self.product_tmpl_id.config_step_line_ids
         active_step = str(cfg_steps[0].id) if cfg_steps else 'configure'
+        last_step = str(cfg_steps[-1].id) if cfg_steps else 'configure'
 
         wizard_obj = self.env['product.configurator']
         wizard = wizard_obj.create({
@@ -19,6 +20,7 @@ class ProductProduct(models.Model):
             'product_tmpl_id': self.id,
             'product_id': self.id,
             'state': active_step,
+            'last_step': last_step,
         })
 
         return {
@@ -44,12 +46,14 @@ class ProductTemplate(models.Model):
 
         cfg_steps = self.config_step_line_ids
         active_step = str(cfg_steps[0].id) if cfg_steps else 'configure'
+        last_step = str(cfg_steps[-1].id) if cfg_steps else 'configure'
 
         wizard_obj = self.env['product.configurator']
         wizard = wizard_obj.create({
-            'modify_variant': True,
+            'modify_variant': False,
             'product_tmpl_id': self.id,
             'state': active_step,
+            'last_step': last_step,
         })
         # Had to remove default_type because while creating mrp.bom it was taking type from product.template context
         ctx_no_type = self._context.copy()
