@@ -22,6 +22,11 @@ class ProductConfigurator(models.TransientModel):
     field_prefix = '__attribute-'
     custom_field_prefix = '__custom-'
 
+    @api.model
+    def is_dynamic_field(self, name):
+        return name.startswith(self.field_prefix) or name.startswith(
+            self.custom_field_prefix)
+
     # TODO: Since the configuration process can take a bit of time
     # depending on complexity and AFK time we must increase the lifespan
     # of this TransientModel life
@@ -434,8 +439,7 @@ class ProductConfigurator(models.TransientModel):
         # Get updated fields including the dynamic ones
         fields = self.fields_get()
         dynamic_fields = {
-            k: v for k, v in fields.iteritems() if k.startswith(
-                self.field_prefix) or k.startswith(self.custom_field_prefix)
+            k: v for k, v in fields.iteritems() if self.is_dynamic_field(k)
         }
 
         res['fields'].update(dynamic_fields)
