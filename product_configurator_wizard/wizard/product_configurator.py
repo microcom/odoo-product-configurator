@@ -62,6 +62,7 @@ class ProductConfigurator(models.TransientModel):
             steps = open_steps if wiz.product_id else steps + open_steps
         else:
             steps.append(('configure', 'Configure'))
+        wiz.last_step = steps[-1][0]
         return steps
 
     @api.onchange('product_tmpl_id')
@@ -301,6 +302,12 @@ class ProductConfigurator(models.TransientModel):
         readonly=True,
     )
     modify_variant = fields.Boolean('Modify Variant', default=False)
+    last_step = fields.Char('Last Step', default='not_select')
+    final_state = fields.Boolean('Final State', compute='_compute_final_state')
+
+    @api.depends('last_step')
+    def _compute_final_state(self):
+        self.final_state = self.state == self.last_step
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):

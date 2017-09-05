@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-17 19:15+0000\n"
-"PO-Revision-Date: 2017-08-17 16:09-0400\n"
+"PO-Revision-Date: 2017-08-22 13:45-0400\n"
 "Last-Translator: Stéphane Le Cornec <slc@microcom.ca>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.7\n"
 
 #. module: product_configurator_wizard
-#: code:addons/product_configurator_wizard/wizard/product_configurator.py:742
+#: code:addons/product_configurator_wizard/wizard/product_configurator.py:743
 #, python-format
 msgid "An error occurred while parsing value for attribute %s"
 msgstr "Une erreur s’est produite lors de l’analyse de valeur pour l’attribut %s"
@@ -65,7 +65,7 @@ msgid "Configurable"
 msgstr "Configurable"
 
 #. module: product_configurator_wizard
-#: code:addons/product_configurator_wizard/wizard/product_configurator.py:931
+#: code:addons/product_configurator_wizard/wizard/product_configurator.py:935
 #, python-format
 msgid "Configurable Products cannot have duplicates (identical attribute values)"
 msgstr "Les produits configurables ne peut pas avoir de doublons (valeurs d’attributs identiques)"
@@ -110,19 +110,24 @@ msgid "Display Name"
 msgstr "Afficher le nom"
 
 #. module: product_configurator_wizard
+#: model:ir.ui.view,arch_db:product_configurator_wizard.product_configurator_form
+msgid "Done"
+msgstr "Terminé"
+
+#. module: product_configurator_wizard
 #: model:ir.model.fields,field_description:product_configurator_wizard.field_product_configurator_custom_value_id
 #: model:ir.model.fields,field_description:product_configurator_wizard.field_product_configurator_id
 msgid "ID"
 msgstr "ID"
 
 #. module: product_configurator_wizard
-#: code:addons/product_configurator_wizard/wizard/product_configurator.py:914
+#: code:addons/product_configurator_wizard/wizard/product_configurator.py:918
 #, python-format
 msgid "Invalid Configuration"
 msgstr "Invalid Configuration"
 
 #. module: product_configurator_wizard
-#: code:addons/product_configurator_wizard/wizard/product_configurator.py:949
+#: code:addons/product_configurator_wizard/wizard/product_configurator.py:953
 #, python-format
 msgid "Invalid configuration! Please check all required steps and fields."
 msgstr "Configuration non valide ! S’il vous plaît vérifier tous les champs et les étapes nécessaires."
@@ -132,6 +137,11 @@ msgstr "Configuration non valide ! S’il vous plaît vérifier tous les champs
 #: model:ir.model.fields,field_description:product_configurator_wizard.field_product_configurator_custom_value___last_update
 msgid "Last Modified on"
 msgstr "Dernière Modification le"
+
+#. module: product_configurator_wizard
+#: model:ir.model.fields,field_description:product_configurator_wizard.field_product_configurator_last_step
+msgid "Last Step"
+msgstr "Dernière étape"
 
 #. module: product_configurator_wizard
 #: model:ir.model.fields,field_description:product_configurator_wizard.field_product_configurator_custom_value_write_uid
@@ -150,7 +160,7 @@ msgstr "Dernière mise à jour le"
 #: model:ir.model.fields,field_description:product_configurator_wizard.field_res_company_modify_variant
 #: model:ir.ui.view,arch_db:product_configurator_wizard.view_sales_config
 msgid "Modify Variant"
-msgstr "Modify Variant"
+msgstr "Modifier les variantes"
 
 #. module: product_configurator_wizard
 #: model:ir.ui.view,arch_db:product_configurator_wizard.product_configurator_form
@@ -208,10 +218,15 @@ msgid "State"
 msgstr "État"
 
 #. module: product_configurator_wizard
-#: code:addons/product_configurator_wizard/wizard/product_configurator.py:484
+#: code:addons/product_configurator_wizard/wizard/product_configurator.py:485
 #, python-format
 msgid "There was a problem rendering the view (dynamic_form not found)"
 msgstr "Problème de génération du formulaire (node dynamic_form introuvable)"
+
+#. module: product_configurator_wizard
+#: model:ir.ui.view,arch_db:product_configurator_wizard.product_configurator_form
+msgid "Update"
+msgstr "Mise à jour"
 
 #. module: product_configurator_wizard
 #: model:ir.model.fields,field_description:product_configurator_wizard.field_product_configurator_custom_value_user_id
