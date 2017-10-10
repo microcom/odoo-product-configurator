@@ -22,7 +22,7 @@ class ProductProduct(models.Model):
             product.hidden_attribute_value_ids = hidden_ids
 
     def _compute_attribute_description(self):
-        for product in self.sudo():
+        for product in self:
             # prefetch values
             value_dict = {}
             for value in product.attribute_value_ids:
