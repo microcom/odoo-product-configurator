@@ -22,10 +22,10 @@ class ProductProduct(models.Model):
             product.hidden_attribute_value_ids = hidden_ids
 
     def _compute_attribute_description(self):
-        for product in self.sudo():
+        for product in self:
             # prefetch values
             value_dict = {}
-            for value in self.attribute_value_ids:
+            for value in product.attribute_value_ids:
                 old_value = value_dict.get(value.attribute_id.name)
                 if old_value:
                     value_dict[value.attribute_id.name] = ', '.join([old_value, value.name])
@@ -34,7 +34,7 @@ class ProductProduct(models.Model):
             # assemble variant
             novalue = _('<span style="color: #a8a8a8;">None</span>')  # @odoo-main-color-muted: #a8a8a8;
             name_elements = []
-            for line in self.attribute_line_ids.sorted('sequence'):
+            for line in product.attribute_line_ids.sorted('sequence'):
                 key = line.attribute_id.name
                 value = value_dict.get(key, novalue)
                 name_elements.append(u'<li><strong>{}:</strong> {}</li>'.format(key, value))
