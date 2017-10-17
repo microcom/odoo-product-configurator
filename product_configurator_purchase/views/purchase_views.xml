@@ -19,7 +19,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']" position="before">
                 <button name="%(action_wizard_product_purchase_configurator)s"
-                        states="draft,sent"
+                        states="draft,sent,purchase"
                         class="oe_highlight"
                         type="action"
                         style="margin-top: 15px;margin-bottom: 10px;"
@@ -41,7 +41,7 @@
                             'invisible': [
                                 '|',
                                 ('config_ok','=',False),
-                                ('state','not in',['draft','sent'])
+                                ('state','not in',['draft','sent','purchase'])
                             ]}"/>
             </xpath>
 
