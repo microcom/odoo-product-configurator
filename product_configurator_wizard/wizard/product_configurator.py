@@ -818,14 +818,24 @@ class ProductConfigurator(models.TransientModel):
             return wizard_action
 
         cfg_step_lines = self.product_tmpl_id.config_step_line_ids
-
+        
+        # Start: Commented this code because we need to create product without attribute values
+#         if not cfg_step_lines:
+#             if self.value_ids:
+#                 return self.action_config_done()
+#             else:
+#                 self.state = 'configure'
+#                 return wizard_action
+        # Ends: Commented this code because we need to create product without attribute values
+        
+        # Start: Added this part to create product variant without attribute values
         if not cfg_step_lines:
-            if self.value_ids:
-                return self.action_config_done()
-            else:
+            if self.state == 'select':
                 self.state = 'configure'
                 return wizard_action
-
+            return self.action_config_done()
+        # Ends: Added this part to create product variant without attribute values
+        
         try:
             cfg_step_line_id = int(self.state)
         except:
