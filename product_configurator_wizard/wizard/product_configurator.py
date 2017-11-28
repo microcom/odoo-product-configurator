@@ -586,8 +586,9 @@ class ProductConfigurator(models.TransientModel):
             vals = attr_line.value_ids.filtered(
                 lambda v: v in self.value_ids)
 
-            if not attr_line.custom and not vals:
-                continue
+            # FIX-11 error at _parseServerData() in basic_model.js
+            # if not attr_line.custom and not vals:
+            #     continue
 
             if attr_line.custom and custom_vals:
                 dynamic_vals.update({
@@ -601,6 +602,9 @@ class ProductConfigurator(models.TransientModel):
                     dynamic_vals.update({
                         custom_field_name: custom_vals.eval()
                     })
+            elif not vals:
+                # FIX-11 _parseServerData() expects False
+                dynamic_vals = {field_name: False}
             elif attr_line.multi:
                 dynamic_vals = {field_name: [[6, 0, vals.ids]]}
             else:
