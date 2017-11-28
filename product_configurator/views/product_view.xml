@@ -82,7 +82,7 @@
                     <tree editable="bottom" string="Configuration Images">
                         <field name="sequence" widget="handle"/>
                         <field name="name"/>
-                        <field name="image" widget="image" height="30px"/>
+                        <field name="image" height="30px"/>
                         <field name="value_ids" widget="many2many_tags" context="{'_cfg_product_tmpl_id': parent.id}"/>
                     </tree>
                 </field>
