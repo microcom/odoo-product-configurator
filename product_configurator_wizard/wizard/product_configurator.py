@@ -280,16 +280,21 @@ class ProductConfigurator(models.TransientModel):
 
         # Default field attributes
         default_attrs = {
-            'company_dependent': False,
-            'depends': (),
-            'groups': False,
-            'readonly': False,
-            'manual': False,
-            'required': False,
-            'searchable': False,
-            'store': False,
-            'translate': False,
+            # FIX-11 no bug behind change, load_views typical values
+            'change_default' : False,
+            'company_dependent' : False,
+            'context' : {},
+            'depends' : [],
+            'domain' : [],
+            'manual' : False,
+            'readonly' : False,
+            'required' : False,
+            'searchable' : True,
+            'sortable' : True,
+            'store' : True,
         }
+
+
 
         for line in attribute_lines:
             attribute = line.attribute_id
@@ -606,11 +611,18 @@ class ProductConfigurator(models.TransientModel):
                 # FIX-11 _parseServerData() expects False
                 dynamic_vals = {field_name: False}
             elif attr_line.multi:
-                dynamic_vals = {field_name: [[6, 0, vals.ids]]}
+                # FIX-11 _browse() display_name receives _ids = ([6, 0, []],)
+                dynamic_vals = {field_name: vals.ids}
             else:
                 try:
                     vals.ensure_one()
-                    dynamic_vals = {field_name: vals.id}
+                    # FIX-11 empty values (display_name) in reconfigure
+                    # taken from Many2one.convert_to_read()
+                    use_name_get = (load == '_classic_read')
+                    if use_name_get:
+                        dynamic_vals = {field_name: vals.sudo().name_get()[0]}
+                    else:
+                        dynamic_vals = {field_name: vals.id}
                 except:
                     continue
             res[0].update(dynamic_vals)
