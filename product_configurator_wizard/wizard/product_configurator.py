@@ -540,7 +540,8 @@ class ProductConfigurator(models.TransientModel):
         This is used in reconfiguration of a existing variant"""
         vals.update(user_id=self.env.uid)
 
-        if 'product_id' in vals:
+        # FIX-11 key present with False value
+        if vals.get('product_id'):
             product = self.env['product.product'].browse(vals['product_id'])
             vals.update({
                 'product_tmpl_id': product.product_tmpl_id.id,
