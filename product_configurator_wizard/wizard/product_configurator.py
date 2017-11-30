@@ -7,6 +7,9 @@ from odoo import models, fields, api, _
 from odoo.exceptions import Warning, ValidationError
 
 
+FIELD_TYPES = [(key, key) for key in sorted(fields.Field.by_type)]
+
+
 class FreeSelection(fields.Selection):
 
     def convert_to_cache(self, value, record, validate=True):
@@ -294,8 +297,6 @@ class ProductConfigurator(models.TransientModel):
             'store' : True,
         }
 
-
-
         for line in attribute_lines:
             attribute = line.attribute_id
             value_ids = line.value_ids.ids
@@ -312,14 +313,14 @@ class ProductConfigurator(models.TransientModel):
 
                 # Set default field type
                 field_type = 'char'
-                field_types = self.env['ir.model.fields']._get_field_types()
+                # FIX-11 _get_field_types() removed
 
                 if attribute.custom_type:
                     custom_type = line.attribute_id.custom_type
                     # TODO: Rename int to integer in values
                     if custom_type == 'int':
                         field_type = 'integer'
-                    elif custom_type in [f[0] for f in field_types]:
+                    elif custom_type in [f[0] for f in FIELD_TYPES]:
                         field_type = custom_type
 
                 # TODO: Implement custom string on custom attribute
@@ -572,7 +573,6 @@ class ProductConfigurator(models.TransientModel):
 
         custom_ext_id = 'product_configurator.custom_attribute_value'
         custom_val = self.env.ref(custom_ext_id)
-        dynamic_vals = {}
 
         res = super(ProductConfigurator, self).read(fields=fields, load=load)
 
@@ -586,20 +586,23 @@ class ProductConfigurator(models.TransientModel):
             if field_name not in dynamic_fields:
                 continue
 
-            custom_field_name = self.custom_field_prefix + str(attr_id)
-            custom_vals = self.custom_value_ids.filtered(
-                lambda x: x.attribute_id.id == attr_id)
+            # FIX-11 refactor
+            # - all m2o keys must be present
+            #   error at _parseServerData() in basic_model.js
+            # - ids expect [1,2]
+            #   _browse() display_name receives _ids = ([6, 0, []],)
+            # - m2o expects (1, 'name')
+            #   nothing to display
+            dynamic_vals = {}
             vals = attr_line.value_ids.filtered(
                 lambda v: v in self.value_ids)
 
-            # FIX-11 error at _parseServerData() in basic_model.js
-            # if not attr_line.custom and not vals:
-            #     continue
+            # set custom value
+            if attr_line.custom:
+                custom_field_name = self.custom_field_prefix + str(attr_id)
+                custom_vals = self.custom_value_ids.filtered(
+                    lambda x: x.attribute_id.id == attr_id)
 
-            if attr_line.custom and custom_vals:
-                dynamic_vals.update({
-                    field_name: custom_val.id,
-                })
                 if attr_line.attribute_id.custom_type == 'binary':
                     dynamic_vals.update({
                         custom_field_name: custom_vals.eval()
@@ -608,12 +611,16 @@ class ProductConfigurator(models.TransientModel):
                     dynamic_vals.update({
                         custom_field_name: custom_vals.eval()
                     })
-            elif not vals:
-                # FIX-11 _parseServerData() expects False
-                dynamic_vals = {field_name: False}
+                if custom_vals:
+                    # override field value
+                    vals = custom_val
+
+            # set field value
+            if not vals:
+                dynamic_vals.update({field_name: False})
             elif attr_line.multi:
                 # FIX-11 _browse() display_name receives _ids = ([6, 0, []],)
-                dynamic_vals = {field_name: vals.ids}
+                dynamic_vals.update({field_name: vals.ids})
             else:
                 try:
                     vals.ensure_one()
@@ -621,9 +628,10 @@ class ProductConfigurator(models.TransientModel):
                     # taken from Many2one.convert_to_read()
                     use_name_get = (load == '_classic_read')
                     if use_name_get:
-                        dynamic_vals = {field_name: vals.sudo().name_get()[0]}
+                        vals = vals.with_context(show_attribute=False)
+                        dynamic_vals.update({field_name: vals.sudo().name_get()[0]})
                     else:
-                        dynamic_vals = {field_name: vals.id}
+                        dynamic_vals.update({field_name: vals.id})
                 except:
                     continue
             res[0].update(dynamic_vals)

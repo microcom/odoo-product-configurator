@@ -416,7 +416,8 @@ class ProductConfigSession(models.Model):
 
         if custom_val_dict:
             binary_field_ids = self.env['product.attribute'].search([
-                ('id', 'in', custom_val_dict.keys()),
+                # FIX-11 python 3 view object
+                ('id', 'in', list(custom_val_dict.keys())),
                 ('custom_type', '=', 'binary')
             ]).ids
         for attr_id, vals in custom_val_dict.items():
