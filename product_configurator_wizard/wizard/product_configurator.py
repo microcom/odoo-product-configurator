@@ -839,6 +839,13 @@ class ProductConfigurator(models.TransientModel):
                   'required steps and fields.')
             )
 
+        self.action_config_done_postprocess(variant)
+        self.unlink()
+        return
+
+    @api.multi
+    def action_config_done_postprocess(self, variant):
+        """ hook to update active record before wizard is deleted """
         so = self.env['sale.order'].browse(self.env.context.get('active_id'))
 
         line_vals = {'product_id': variant.id}
@@ -850,9 +857,6 @@ class ProductConfigurator(models.TransientModel):
             self.order_line_id.write(line_vals)
         else:
             so.write({'order_line': [(0, 0, line_vals)]})
-
-        self.unlink()
-        return
 
 
 class ProductConfiguratorCustomValue(models.TransientModel):
