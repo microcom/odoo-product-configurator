@@ -221,6 +221,8 @@ class ProductTemplate(models.Model):
         """
         self.ensure_one()
 
+        # TODO search finds any match with same 2+ custom attributes
+
         if custom_values is None:
             custom_values = {}
         attr_obj = self.env['product.attribute']
@@ -290,11 +292,12 @@ class ProductTemplate(models.Model):
         binary_attribute_ids = attr_obj.search([
             ('custom_type', '=', 'binary')]).ids
 
-        custom_lines = []
+        # remove all previous custom values
+        custom_lines = [(5, 0, 0)]
 
         for key, val in custom_values.items():
             custom_vals = {'attribute_id': key}
-            # TODO: Is this extra check neccesairy as we already make
+            # TODO: Is this extra check necessary as we already make
             # the check in validate_configuration?
             attr_obj.browse(key).validate_custom_val(val)
             if key in binary_attribute_ids:
@@ -610,7 +613,7 @@ class ProductProduct(models.Model):
         comodel_name='product.attribute.value.custom',
         inverse_name='product_id',
         string='Custom Values',
-        readonly=True
+        readonly=True,
     )
 
     @api.multi

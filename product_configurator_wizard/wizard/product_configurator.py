@@ -313,7 +313,7 @@ class ProductConfigurator(models.TransientModel):
 
                 # Set default field type
                 field_type = 'char'
-                # FIX-11 _get_field_types() removed
+                # FIX-11 _get_field_types() removed, using FIELD_TYPES
 
                 if attribute.custom_type:
                     custom_type = line.attribute_id.custom_type
@@ -741,11 +741,11 @@ class ProductConfigurator(models.TransientModel):
         cfg_step_lines = self.product_tmpl_id.config_step_line_ids
 
         if not cfg_step_lines:
-            if self.value_ids:
-                return self.action_config_done()
-            else:
+            # FIX-11 general fix - step-less, all custom must complete
+            if self.state == 'select':
                 self.state = 'configure'
                 return wizard_action
+            return self.action_config_done()
 
         try:
             cfg_step_line_id = int(self.state)
@@ -849,7 +849,6 @@ class ProductConfigurator(models.TransientModel):
 
         self.action_config_done_postprocess(variant)
         self.unlink()
-        return
 
     @api.multi
     def action_config_done_postprocess(self, variant):
