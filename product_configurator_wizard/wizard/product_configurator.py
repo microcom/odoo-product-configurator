@@ -486,8 +486,8 @@ class ProductConfigurator(models.TransientModel):
                 attrs=str(attrs),
                 context="{'show_attribute': False}",
                 options=str({
-                    'no_create': True,
-                    'no_create_edit': True,
+                    'no_create': not attr_line.attribute_id.create_on_the_fly,
+                    'no_create_edit': not attr_line.attribute_id.create_on_the_fly,
                     'no_open': True
                 })
             )
