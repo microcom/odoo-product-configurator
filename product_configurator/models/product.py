@@ -458,7 +458,7 @@ class ProductTemplate(models.Model):
                 attribute line.
             :param value_ids: list of attribute value ids already chosen
 
-            :returns: The first matched default id
+            :returns: The first matched default (id, display_name)
 
         """
         self.ensure_one()
@@ -482,6 +482,11 @@ class ProductTemplate(models.Model):
             # parsed all lines without a match
             return False
         # pick one at random...
+        return next(
+            ((value_id.id, value_id.display_name)
+                for value_id in default_line.value_ids
+                if value_id.id in selectable_value_ids),
+            False)
         return (
             set(default_line.value_ids.ids) & set(selectable_value_ids)
         ).pop()

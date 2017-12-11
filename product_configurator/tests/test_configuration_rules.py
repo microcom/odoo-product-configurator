@@ -112,7 +112,8 @@ class ConfigurationRules(TransactionCase):
             attr_val_ids,
         )
         self.assertEqual(
-            [default_value_engine], self.get_attr_val_ids(['218i']),
+            [default_value_engine and default_value_engine[0]],
+            self.get_attr_val_ids(['218i']),
             "Gasoline Engine default not set correctly"
         )
 
@@ -123,7 +124,8 @@ class ConfigurationRules(TransactionCase):
             attr_val_ids,
         )
         self.assertEqual(
-            [default_value_color], self.get_attr_val_ids(['red']),
+            [default_value_color and default_value_color[0]],
+            self.get_attr_val_ids(['red']),
             "Gasoline Color default not set correctly"
         )
 

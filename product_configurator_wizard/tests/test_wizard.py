@@ -158,7 +158,7 @@ class ConfigurationRules(TransactionCase):
         )
         k, v = attr_218i_dict.popitem()
         self.assertEqual(
-            oc_result.get('value', {}).get(k),
+            oc_result.get('value', {}).get(k, [None])[0],
             v,
             "Engine default value not set correctly by onchange wizard"
         )

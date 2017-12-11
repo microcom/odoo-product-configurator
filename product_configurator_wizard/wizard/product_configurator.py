@@ -137,8 +137,8 @@ class ProductConfigurator(models.TransientModel):
             available_val_ids = domains[k][0][2]
             # Get this fresh every time as the loop can change the values as
             # it goes!
-            config_val_ids = [dfv for dfv in dynamic_fields.values()
-                              if dfv and not isinstance(dfv, list)]
+            config_val_ids = [dfv[0] for dfv in dynamic_fields.values()
+                              if isinstance(dfv, tuple)]
             for list_dfv in [dfv for dfv in dynamic_fields.values()
                              if dfv and isinstance(dfv, list)]:
                 config_val_ids.extend(list_dfv[0][2])
