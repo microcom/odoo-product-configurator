@@ -4,10 +4,15 @@ from lxml import etree
 
 from odoo.osv import orm
 from odoo import models, fields, api, _
-from odoo.exceptions import Warning, ValidationError
+from odoo.exceptions import ValidationError
 
 
 FIELD_TYPES = [(key, key) for key in sorted(fields.Field.by_type)]
+
+
+def m2o_convert_to_read(value_id, use_name_get=True):
+    return fields.Many2one.convert_to_read(
+        None, value_id, None, use_name_get=use_name_get)
 
 
 class FreeSelection(fields.Selection):
@@ -157,7 +162,7 @@ class ProductConfigurator(models.TransientModel):
                 value_ids = list(set(v[0][2]) & set(available_val_ids))
                 dynamic_fields[k] = [[6, 0, value_ids]]
                 vals[k] = [[6, 0, value_ids]]
-            elif v not in available_val_ids:
+            elif v[0] not in available_val_ids:
                 # if the value is to be blanked, and it is on the current
                 # step, see if a default can be set
                 if set(available_val_ids) & set(step_val_ids):
@@ -205,9 +210,16 @@ class ProductConfigurator(models.TransientModel):
         except:
             cfg_step = self.env['product.config.step.line']
 
+        def _convert_to_read(v):
+            if isinstance(v, list):
+                return v
+            if isinstance(v, int):
+                return m2o_convert_to_read(
+                    self.env['product.attribute.value'].browse(v))
+
         dynamic_fields = {
-            k: v for k, v in values.items() if k.startswith(
-                self.field_prefix)
+            k: _convert_to_read(v) for k, v in values.items()
+            if k.startswith(self.field_prefix)
         }
 
         # Get the unstored values from the client view
@@ -225,6 +237,8 @@ class ProductConfigurator(models.TransientModel):
                 view_val_ids |= set(v[0][2])
             elif isinstance(v, int):
                 view_val_ids.add(v)
+            elif isinstance(v, tuple):
+                view_val_ids.add(v[0])
 
         # Clear all DB values belonging to attributes changed in the wizard
         cfg_vals = cfg_vals.filtered(
@@ -252,6 +266,8 @@ class ProductConfigurator(models.TransientModel):
                         view_val_ids |= set(v[0][2])
                     elif isinstance(v, int):
                         view_val_ids.add(v)
+                    elif isinstance(v, tuple):
+                        view_val_ids.add(v[0])
 
             cfg_val_ids = cfg_vals.ids + list(view_val_ids)
 
@@ -710,14 +726,11 @@ class ProductConfigurator(models.TransientModel):
                 try:
                     vals.ensure_one()
                     # FIX-11 empty values (display_name) in reconfigure
-                    # taken from Many2one.convert_to_read()
-                    use_name_get = (load == '_classic_read')
-                    if use_name_get:
-                        vals = vals.with_context(show_attribute=False)
-                        dynamic_vals.update({field_name: vals.sudo().name_get()[0]})
-                    else:
-                        dynamic_vals.update({field_name: vals.id})
-                except:
+                    value = m2o_convert_to_read(vals,
+                        use_name_get=(load == '_classic_read'))
+                    dynamic_vals.update({field_name: value})
+                except ValueError:
+                    # ensure_one() failed
                     continue
             res[0].update(dynamic_vals)
         return res
@@ -754,6 +767,9 @@ class ProductConfigurator(models.TransientModel):
                         field_val = vals[field_name][0][2]
                 elif not attr_line.multi and isinstance(vals[field_name], int):
                     field_val = vals[field_name]
+                elif not attr_line.multi and isinstance(vals[field_name], tuple):
+                    # patch for fields_view_get()
+                    field_val = vals[field_name][0]
                 else:
                     raise Warning(
                         _('An error occursed while parsing value for '
@@ -926,7 +942,7 @@ class ProductConfigurator(models.TransientModel):
                 self.value_ids.ids, custom_vals)
         except ValidationError:
             raise
-        except:
+        except Exception as e:
             raise ValidationError(
                 _('Invalid configuration! Please check all '
                   'required steps and fields.')
