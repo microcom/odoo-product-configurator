@@ -211,8 +211,8 @@ class ProductConfigurator(models.TransientModel):
                     'default_attribute_id': attribute_id
                 }),
                 options=str({
-                    'no_create': not attr_line.attribute_id.create_on_fly,
-                    'no_create_edit': not attr_line.attribute_id.create_on_fly,
+                    'no_create': not attr_line.attribute_id.create_on_the_fly,
+                    'no_create_edit': not attr_line.attribute_id.create_on_the_fly,
                     'no_open': True
                 })
             )
