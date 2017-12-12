@@ -299,7 +299,7 @@ class ProductTemplate(models.Model):
             ('custom_type', '=', 'binary')]).ids
 
         # remove all previous custom values
-        custom_lines = [(5, 0, 0)]
+        custom_lines = [(5, 0, {})]
 
         for key, val in custom_values.items():
             custom_vals = {'attribute_id': key}
