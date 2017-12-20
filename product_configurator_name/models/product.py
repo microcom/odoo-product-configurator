@@ -80,6 +80,14 @@ class ProductProduct(models.Model):
                             value_dict[value.attribute_id.name] = ', '.join([old_value, value.name])
                         else:
                             value_dict[value.attribute_id.name] = value.name
+                    # START: To make attribute value visible in name for custom values
+                    for custom_line in product.value_custom_ids:
+                        old_value = value_dict.get(custom_line.attribute_id.name)
+                        if old_value:
+                            value_dict[custom_line.attribute_id.name] = ', '.join([old_value, custom_line.name])
+                        else:
+                            value_dict[custom_line.attribute_id.name] = custom_line.name
+                    # ENDS: To make attribute value visible in name for custom values
                     # assemble variant
                     name_elements = []
                     for line in product.attribute_line_ids.sorted('sequence'):
