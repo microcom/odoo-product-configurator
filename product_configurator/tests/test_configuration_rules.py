@@ -12,7 +12,7 @@ class ConfigurationRules(TransactionCase):
         attribute_vals = self.cfg_tmpl.attribute_line_ids.mapped('value_ids')
 
         self.attr_val_ext_ids = {
-            v: k for k, v in attribute_vals.get_external_id().iteritems()
+            v: k for k, v in attribute_vals.get_external_id().items()
         }
 
     def get_attr_val_ids(self, ext_ids):
@@ -101,4 +101,43 @@ class ConfigurationRules(TransactionCase):
         self.assertFalse(validation, "Custom value accepted for fixed "
                          "attribute color")
 
-    # TODO: Test configuration with disallowed custom type value
+    def test_configuration_defaults(self):
+        conf = ['gasoline', 'tapistry_black']
+        engine_selections = self.env.ref(
+            'product_configurator.product_config_line_gasoline_engines'
+        )
+        attr_val_ids = self.get_attr_val_ids(conf)
+        default_value_engine = self.cfg_tmpl.find_default_value(
+            engine_selections.value_ids.ids,
+            attr_val_ids,
+        )
+        self.assertEqual(
+            [default_value_engine and default_value_engine[0]],
+            self.get_attr_val_ids(['218i']),
+            "Gasoline Engine default not set correctly"
+        )
+
+        color_selection_ids = self.get_attr_val_ids(['red', 'silver', 'black'])
+        attr_val_ids = self.get_attr_val_ids(conf)
+        default_value_color = self.cfg_tmpl.find_default_value(
+            color_selection_ids,
+            attr_val_ids,
+        )
+        self.assertEqual(
+            [default_value_color and default_value_color[0]],
+            self.get_attr_val_ids(['red']),
+            "Gasoline Color default not set correctly"
+        )
+
+        color_selection_ids = self.get_attr_val_ids(['silver', 'black'])
+        attr_val_ids = self.get_attr_val_ids(conf)
+        default_value_color = self.cfg_tmpl.find_default_value(
+            color_selection_ids,
+            attr_val_ids,
+        )
+        self.assertFalse(
+            default_value_color,
+            "Gasoline Color should not have been returned unselectable value"
+        )
+
+    # Test configuration with disallowed custom type value
