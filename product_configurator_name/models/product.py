@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from collections import defaultdict
+
 from odoo import models, fields, api, _
 
 
@@ -40,6 +42,18 @@ class ProductProduct(models.Model):
                 name_elements.append(u'<li><strong>{}:</strong> {}</li>'.format(key, value))
             product.attribute_description = u'<ul>{}</ul>'.format(u''.join(name_elements))
 
+    def get_attribute_array(self):
+        # prefetch values
+        value_dict = defaultdict(list)
+        for value in self.attribute_value_ids:
+            value_dict[value.attribute_id.name].append(value.name)
+        for value in self.value_custom_ids:
+            value_dict[value.attribute_id.name].append(value.name)
+        # match lines
+        return [
+            (line.attribute_id, line.display_mode, value_dict[line.attribute_id.name])
+            for line in self.attribute_line_ids.sorted('sequence')]
+
     @api.multi
     def name_get(self):
         """ Override variant name
@@ -72,6 +86,7 @@ class ProductProduct(models.Model):
                 name = product.name_override
             else:
                 if product.config_ok:
+                    # TODO refactor with get_attribute_array()
                     # prefetch values
                     value_dict = {}
                     for value in product.attribute_value_ids:
