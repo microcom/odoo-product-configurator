@@ -86,37 +86,14 @@ class ProductProduct(models.Model):
                 name = product.name_override
             else:
                 if product.config_ok:
-                    # TODO refactor with get_attribute_array()
-                    # prefetch values
-                    value_dict = {}
-                    for value in product.attribute_value_ids:
-                        old_value = value_dict.get(value.attribute_id.name)
-                        if old_value:
-                            value_dict[value.attribute_id.name] = ', '.join([old_value, value.name])
-                        else:
-                            value_dict[value.attribute_id.name] = value.name
-                    # START: To make attribute value visible in name for custom values
-                    for custom_line in product.value_custom_ids:
-                        old_value = value_dict.get(custom_line.attribute_id.name)
-                        if old_value:
-                            value_dict[custom_line.attribute_id.name] = ', '.join([old_value, custom_line.name])
-                        else:
-                            value_dict[custom_line.attribute_id.name] = custom_line.name
-                    # ENDS: To make attribute value visible in name for custom values
-                    # assemble variant
                     name_elements = []
-                    for line in product.attribute_line_ids.sorted('sequence'):
-                        if line.display_mode == 'hide':
+                    for line, mode, value in product.get_attribute_array():
+                        if mode == 'hide' or not len(value):
                             continue
-                        key = line.attribute_id.name
-                        if key in value_dict:
-                            value = value_dict[key]
-                        else:
-                            continue
-                        if line.display_mode == 'value':
-                            name_elements.append(u'{}'.format(value))
-                        elif line.display_mode == 'attribute':
-                            name_elements.append(u'{}: {}'.format(key, value))
+                        if mode == 'value':
+                            name_elements.append(u'{}'.format(value[0]))
+                        elif mode == 'attribute':
+                            name_elements.append(u'{}: {}'.format(line.name, value[0]))
                     variant = ', '.join(name_elements)
                 else:
                     # display only the attributes with multiple possible values on the template
