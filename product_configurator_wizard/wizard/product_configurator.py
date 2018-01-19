@@ -146,7 +146,7 @@ class ProductConfigurator(models.TransientModel):
                               if isinstance(dfv, tuple)]
             for list_dfv in [dfv for dfv in dynamic_fields.values()
                              if dfv and isinstance(dfv, list)]:
-                config_val_ids.extend(list_dfv[0][2])
+                config_val_ids.extend(list_dfv)
             if not v:
                 # if the value currently is blank and on the current step, see
                 # if one can be set
@@ -159,7 +159,7 @@ class ProductConfigurator(models.TransientModel):
                         vals[k] = def_value_id
                 continue
             if isinstance(v, list):
-                value_ids = list(set(v[0][2]) & set(available_val_ids))
+                value_ids = list(set(v) & set(available_val_ids))
                 dynamic_fields[k] = [[6, 0, value_ids]]
                 vals[k] = [[6, 0, value_ids]]
             elif v[0] not in available_val_ids:
