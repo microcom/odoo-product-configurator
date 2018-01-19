@@ -91,9 +91,9 @@ class ProductProduct(models.Model):
                         if mode == 'hide' or not len(value):
                             continue
                         if mode == 'value':
-                            name_elements.append(u'{}'.format(value[0]))
+                            name_elements.append(', '.join(value))
                         elif mode == 'attribute':
-                            name_elements.append(u'{}: {}'.format(line.name, value[0]))
+                            name_elements.append('{}: {}'.format(line.name, ', '.join(value)))
                     variant = ', '.join(name_elements)
                 else:
                     # display only the attributes with multiple possible values on the template
