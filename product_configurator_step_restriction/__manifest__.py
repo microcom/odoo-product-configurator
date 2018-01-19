@@ -17,12 +17,9 @@ Add a restriction on the step to skip it""",
 
     'data': [
         'security/ir.model.access.csv',
-        'views/sale_view.xml',
-        'views/scenario_views.xml',
         'views/product_config_view.xml',
     ],
 
     'demo': [
-        'demo/scenario_attributes.xml',
     ],
 }
