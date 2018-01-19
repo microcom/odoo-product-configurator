@@ -16,7 +16,6 @@ Add a restriction on the step to skip it""",
     'depends': ['product_configurator_wizard'],
 
     'data': [
-        'security/ir.model.access.csv',
         'views/product_config_view.xml',
     ],
 
