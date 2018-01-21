@@ -63,6 +63,6 @@ class ProductTemplate(models.Model):
                 if available_vals or attr_line.custom:
                     open_step_lines |= cfg_line
                     break
-        if not open_step_lines:
+        if not open_step_lines and self.config_step_line_ids:
             open_step_lines = self.get_open_step_lines(value_ids, force_all=True)
         return open_step_lines.sorted()
