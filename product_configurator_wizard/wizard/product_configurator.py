@@ -826,7 +826,7 @@ class ProductConfigurator(models.TransientModel):
         wizard_action = {
             'type': 'ir.actions.act_window',
             'res_model': self._name,
-            'name': "Configure Product",
+            'name': _("Configure Product"),
             'view_mode': 'form',
             'context': dict(
                 self.env.context,
@@ -877,7 +877,7 @@ class ProductConfigurator(models.TransientModel):
         wizard_action = {
             'type': 'ir.actions.act_window',
             'res_model': self._name,
-            'name': "Configure Product",
+            'name': _("Configure Product"),
             'view_mode': 'form',
             'context': dict(
                 self.env.context,
