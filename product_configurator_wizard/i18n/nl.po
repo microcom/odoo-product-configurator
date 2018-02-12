@@ -21,7 +21,7 @@ msgstr ""
 #: code:addons/product_configurator_wizard/wizard/product_configurator.py:644
 #: code:addons/product_configurator_wizard/wizard/product_configurator.py:649
 #, python-format
-msgid "An error occursed while parsing value for attribute %s"
+msgid "An error occurred while parsing value for attribute %s"
 msgstr "Er is een fout opgetreden bij het verwerken van de waarde voor kenmerk %s"
 
 #. module: product_configurator_wizard

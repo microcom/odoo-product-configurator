@@ -19,7 +19,7 @@ msgstr ""
 #: code:addons/product_configurator_wizard/wizard/product_configurator.py:644
 #: code:addons/product_configurator_wizard/wizard/product_configurator.py:649
 #, python-format
-msgid "An error occursed while parsing value for attribute %s"
+msgid "An error occurred while parsing value for attribute %s"
 msgstr ""
 
 #. module: product_configurator_wizard

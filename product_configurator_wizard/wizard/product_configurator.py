@@ -772,7 +772,7 @@ class ProductConfigurator(models.TransientModel):
                     field_val = vals[field_name][0]
                 else:
                     raise Warning(
-                        _('An error occursed while parsing value for '
+                        _('An error occurred while parsing value for '
                           'attribute %s' % attr_line.attribute_id.name)
                     )
                 attr_val_dict.update({
