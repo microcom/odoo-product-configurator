@@ -346,10 +346,11 @@ class ProductConfigSession(models.Model):
     @api.depends('value_ids', 'custom_value_ids', 'custom_value_ids.value')
     def _compute_cfg_price(self):
         for session in self:
-            custom_vals = session._get_custom_vals_dict()
-            price = session.product_tmpl_id.get_cfg_price(
-                session.value_ids.ids, custom_vals)
-            session.price = price['total']
+            if session.product_tmpl_id:
+                custom_vals = session._get_custom_vals_dict()
+                price = session.product_tmpl_id.get_cfg_price(
+                    session.value_ids.ids, custom_vals)
+                session.price = price['total']
 
     @api.multi
     def _get_custom_vals_dict(self):
