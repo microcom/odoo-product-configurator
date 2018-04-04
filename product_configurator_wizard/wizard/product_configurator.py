@@ -159,7 +159,14 @@ class ProductConfigurator(models.TransientModel):
                         vals[k] = def_value_id
                 continue
             if isinstance(v, list):
-                value_ids = list(set(v) & set(available_val_ids))
+                # must handle both cases in [7, [6, False, []]]
+                flattened = []
+                for sel_val_id in v:
+                    if type(sel_val_id) == list:
+                        flattened.extend(sel_val_id[2])
+                    else:
+                        flattened.append(sel_val_id)
+                value_ids = list(set(flattened) & set(available_val_ids))
                 dynamic_fields[k] = [[6, 0, value_ids]]
                 vals[k] = [[6, 0, value_ids]]
             elif v[0] not in available_val_ids:
@@ -717,11 +724,11 @@ class ProductConfigurator(models.TransientModel):
                     vals = custom_val
 
             # set field value
-            if not vals:
-                dynamic_vals.update({field_name: False})
-            elif attr_line.multi:
+            if attr_line.multi:
                 # FIX-11 _browse() display_name receives _ids = ([6, 0, []],)
                 dynamic_vals.update({field_name: vals.ids})
+            elif not vals:
+                dynamic_vals.update({field_name: False})
             else:
                 try:
                     vals.ensure_one()

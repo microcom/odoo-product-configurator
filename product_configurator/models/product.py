@@ -392,6 +392,13 @@ class ProductTemplate(models.Model):
         return variant
 
     def validate_domains_against_sels(self, domains, sel_val_ids):
+        # must handle both cases in [7, [6, False, []]]
+        flattened = []
+        for sel_val_id in sel_val_ids:
+            if type(sel_val_id) == list:
+                flattened.extend(sel_val_id[2])
+            else:
+                flattened.append(sel_val_id)
         # process domains as shown in this wikipedia pseudocode:
         # https://en.wikipedia.org/wiki/Polish_notation#Order_of_operations
         stack = []
@@ -399,11 +406,11 @@ class ProductTemplate(models.Model):
             if type(domain) == tuple:
                 # evaluate operand and push to stack
                 if domain[1] == 'in':
-                    if not set(domain[2]) & set(sel_val_ids):
+                    if not set(domain[2]) & set(flattened):
                         stack.append(False)
                         continue
                 else:
-                    if set(domain[2]) & set(sel_val_ids):
+                    if set(domain[2]) & set(flattened):
                         stack.append(False)
                         continue
                 stack.append(True)
