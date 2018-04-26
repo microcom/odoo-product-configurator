@@ -13,6 +13,7 @@ class ResConfigSettings(models.TransientModel):
     module_product_configurator_name = fields.Boolean('Configurator name')
     module_product_configurator_step_restriction = fields.Boolean('Configurator step restriction')
     module_product_configurator_use_default_pricelist = fields.Boolean('Configurator default price list')
+    module_on_the_fly_default = fields.Boolean('Configurator create on the fly by default')
 
     @api.model
     def get_values(self):
