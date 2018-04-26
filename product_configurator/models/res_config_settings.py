@@ -7,6 +7,12 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     product_selectable = fields.Boolean('Product selectable')
+    module_product_configurator_wizard = fields.Boolean('Configurator in sales')
+    module_product_configurator_purchase = fields.Boolean('Configurator in purchase')
+    module_product_configurator_product = fields.Boolean('Configurator in products')
+    module_product_configurator_name = fields.Boolean('Configurator name')
+    module_product_configurator_step_restriction = fields.Boolean('Configurator step restriction')
+    module_product_configurator_use_default_pricelist = fields.Boolean('Configurator default price list')
 
     @api.model
     def get_values(self):
