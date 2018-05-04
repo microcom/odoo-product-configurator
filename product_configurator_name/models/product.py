@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
-
 from odoo import models, fields, api, _
 
 
@@ -24,13 +23,14 @@ class ProductProduct(models.Model):
             product.hidden_attribute_value_ids = hidden_ids
 
     def _compute_attribute_description(self):
+        separator = '%s ' % self.env['ir.config_parameter'].sudo().get_param('product_configurator_name.product_name_separator', default="''")
         for product in self:
             # prefetch values
             value_dict = {}
             for value in product.attribute_value_ids:
                 old_value = value_dict.get(value.attribute_id.name)
                 if old_value:
-                    value_dict[value.attribute_id.name] = ', '.join([old_value, value.name])
+                    value_dict[value.attribute_id.name] = separator.join([old_value, value.name])
                 else:
                     value_dict[value.attribute_id.name] = value.name
             # assemble variant
@@ -68,6 +68,8 @@ class ProductProduct(models.Model):
                 name = '[%s] %s' % (default_code, name)
             return (d['id'], name)
 
+        separator = '%s ' % self.env['ir.config_parameter'].sudo().get_param('product_configurator_name.product_name_separator', default="''")
+
         partner_id = self._context.get('partner_id')
         if partner_id:
             partner_ids = [partner_id, self.env['res.partner'].browse(partner_id).commercial_partner_id.id]
@@ -91,16 +93,16 @@ class ProductProduct(models.Model):
                         if mode == 'hide' or not len(value):
                             continue
                         if mode == 'value':
-                            name_elements.append(', '.join(value))
+                            name_elements.append(separator.join(value))
                         elif mode == 'attribute':
-                            name_elements.append('{}: {}'.format(line.name, ', '.join(value)))
-                    variant = ', '.join(name_elements)
+                            name_elements.append('{}: {}'.format(line.name, separator.join(value)))
+                    variant = separator.join(name_elements)
                 else:
                     # display only the attributes with multiple possible values on the template
                     variable_attributes = product.attribute_line_ids.filtered(lambda l: len(l.value_ids) > 1).mapped('attribute_id')
                     variant = product.attribute_value_ids._variant_name(variable_attributes)
 
-                name = variant and "%s, %s" % (product.name, variant) or product.name
+                name = variant and "%s%s%s" % (product.name, separator, variant) or product.name
             # END CHANGES
             sellers = []
             if partner_ids:
@@ -127,7 +129,7 @@ class ProductProduct(models.Model):
             if sellers:
                 for s in sellers:
                     seller_variant = s.product_name and (
-                        variant and "%s, %s" % (s.product_name, variant) or s.product_name
+                        variant and "%s%s%s" % (s.product_name, separator, variant) or s.product_name
                         ) or False
                     mydict = {
                         'id': product.id,
