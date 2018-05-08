@@ -23,7 +23,7 @@ class ProductProduct(models.Model):
             product.hidden_attribute_value_ids = hidden_ids
 
     def _compute_attribute_description(self):
-        separator = '%s ' % self.env['ir.config_parameter'].sudo().get_param('product_configurator_name.product_name_separator')
+        separator = '%s ' % self.env['ir.config_parameter'].sudo().get_param('product_configurator_name.product_name_separator', default="")
         for product in self:
             # prefetch values
             value_dict = {}
@@ -68,7 +68,7 @@ class ProductProduct(models.Model):
                 name = '[%s] %s' % (default_code, name)
             return (d['id'], name)
 
-        separator = '%s ' % self.env['ir.config_parameter'].sudo().get_param('product_configurator_name.product_name_separator')
+        separator = '%s ' % self.env['ir.config_parameter'].sudo().get_param('product_configurator_name.product_name_separator', default="")
 
         partner_id = self._context.get('partner_id')
         if partner_id:
