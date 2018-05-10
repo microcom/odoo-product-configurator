@@ -22,7 +22,7 @@ class ResConfigSettings(models.TransientModel):
         params = self.env['ir.config_parameter'].sudo()
 
         product_selectable = literal_eval(params.get_param('product_configurator.product_selectable', default='False'))
-        product_name_separator = params.get_param('product_configurator_name.product_name_separator', default="''")
+        product_name_separator = params.get_param('product_configurator_name.product_name_separator')
 
         res.update(
             product_selectable=product_selectable,
