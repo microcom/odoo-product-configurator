@@ -12,7 +12,7 @@
                 <div class="row mt16 o_settings_container">
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_wizard" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_wizard"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Sales" for="module_product_configurator_wizard"/>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_name" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_name"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Name" for="module_product_configurator_name"/>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_step_restriction" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_step_restriction"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator skip step" for="module_product_configurator_step_restriction"/>
@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_use_default_pricelist" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_use_default_pricelist"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator default Pricelist" for="module_product_configurator_use_default_pricelist"/>
@@ -67,9 +67,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-md-6">
+                    <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_on_the_fly_default" widget="upgrade_boolean"/>
+                            <field name="module_on_the_fly_default"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator create on the fly" for="module_on_the_fly_default"/>
@@ -94,7 +94,7 @@
                 <div class="row mt16 o_settings_container">
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_purchase" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_purchase"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Purchase" for="module_product_configurator_purchase"/>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_name" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_name"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Name" for="module_product_configurator_name"/>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_step_restriction" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_step_restriction"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator skip step" for="module_product_configurator_step_restriction"/>
@@ -127,7 +127,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_on_the_fly_default" widget="upgrade_boolean"/>
+                            <field name="module_on_the_fly_default"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator create on the fly" for="module_on_the_fly_default"/>
@@ -154,7 +154,7 @@
                 <div class="row mt16 o_settings_container">
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_product" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_product"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Product forms" for="module_product_configurator_product"/>
@@ -165,7 +165,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_name" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_name"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Name" for="module_product_configurator_name"/>
@@ -176,7 +176,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_product_configurator_step_restriction" widget="upgrade_boolean"/>
+                            <field name="module_product_configurator_step_restriction"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator Skip Step" for="module_product_configurator_step_restriction"/>
@@ -187,7 +187,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="module_on_the_fly_default" widget="upgrade_boolean"/>
+                            <field name="module_on_the_fly_default"/>
                         </div>
                         <div class="o_setting_right_pane">
                             <label string="Configurator create on the fly" for="module_on_the_fly_default"/>
