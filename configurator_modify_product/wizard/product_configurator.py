@@ -10,10 +10,6 @@ class ProductConfigurator(models.TransientModel):
     @api.multi
     def action_config_done(self):
         """Parse values and execute final code before closing the wizard"""
-        if not self.product_id:
-            super(ProductConfigurator, self).action_config_done()
-            return
-
         custom_vals = {
             l.attribute_id.id:
                 l.value or l.attachment_ids for l in self.custom_value_ids
@@ -30,9 +26,15 @@ class ProductConfigurator(models.TransientModel):
             variant = self.product_id
             duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
             if not duplicates:
-                # no other product match the variant, update it
-                variant.update_variant(self.value_ids.ids, custom_vals)
-            if variant in duplicates:
+                # no other product match the variant
+                if not variant:
+                    # create it
+                    vals = self.product_tmpl_id.get_variant_vals(self.value_ids.ids, custom_vals)
+                    variant = self.env['product.product'].create(vals)
+                else:
+                    # update it
+                    variant.update_variant(self.value_ids.ids, custom_vals)
+            elif variant in duplicates:
                 # no change, leave as is
                 pass
             else:
