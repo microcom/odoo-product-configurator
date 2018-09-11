@@ -28,7 +28,18 @@
                         <div class="o_setting_right_pane">
                             <label for="product_selectable"/>
                             <div class="text-muted">
-                                Product can be selected from the sale order line. (In addition to the configure button)
+                                Configured products can be reused in other sale order lines. (Bypassing the configure button)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="product_modifiable"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="product_modifiable"/>
+                            <div class="text-muted">
+                                Configured products can be corrected from the sale order lines.
                             </div>
                         </div>
                     </div>

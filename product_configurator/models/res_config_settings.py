@@ -7,6 +7,7 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     product_selectable = fields.Boolean('Product selectable')
+    product_modifiable = fields.Boolean('Product modifiable')
     module_product_configurator_wizard = fields.Boolean('Configurator in sales')
     module_product_configurator_purchase = fields.Boolean('Configurator in purchase')
     module_product_configurator_product = fields.Boolean('Configurator in products')
@@ -22,10 +23,12 @@ class ResConfigSettings(models.TransientModel):
         params = self.env['ir.config_parameter'].sudo()
 
         product_selectable = literal_eval(params.get_param('product_configurator.product_selectable', default='False'))
+        product_modifiable = literal_eval(params.get_param('product_configurator.product_modifiable', default='False'))
         product_name_separator = params.get_param('product_configurator_name.product_name_separator')
 
         res.update(
             product_selectable=product_selectable,
+            product_modifiable=product_modifiable,
             product_name_separator=product_name_separator
         )
         return res
@@ -34,5 +37,6 @@ class ResConfigSettings(models.TransientModel):
         super(ResConfigSettings, self).set_values()
 
         self.env['ir.config_parameter'].sudo().set_param('product_configurator.product_selectable', self.product_selectable)
+        self.env['ir.config_parameter'].sudo().set_param('product_configurator.product_modifiable', self.product_modifiable)
         self.env['ir.config_parameter'].sudo().set_param('product_configurator_name.product_name_separator', self.product_name_separator)
 

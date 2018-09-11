@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from ast import literal_eval
 from lxml import etree
 
 from odoo.osv import orm
@@ -288,6 +289,12 @@ class ProductConfigurator(models.TransientModel):
             vals.update(nvals)
         return {'value': vals, 'domain': domains}
 
+    @api.model
+    def _default_allow_duplicate(self):
+        allow_duplicate = not literal_eval(self.env['ir.config_parameter'].sudo().get_param(
+            'product_configurator.product_selectable', default='False'))
+        return allow_duplicate
+
     attribute_line_ids = fields.One2many(
         comodel_name='product.attribute.line',
         related='product_tmpl_id.attribute_line_ids',
@@ -324,7 +331,7 @@ class ProductConfigurator(models.TransientModel):
         readonly=True,
     )
     modify_variant = fields.Boolean('Modify Selected Variant', default=False)
-    allow_duplicate = fields.Boolean('Allow Duplicate Variant', default=False)
+    allow_duplicate = fields.Boolean('Allow Duplicate Variant', default=_default_allow_duplicate)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -963,7 +970,8 @@ class ProductConfigurator(models.TransientModel):
                     )
                 elif variant and self.modify_variant:
                     # modify current variant
-                    variant.update_variant(self.value_ids.ids, custom_vals)
+                    vals = self.product_tmpl_id.get_update_variant_vals(self.value_ids.ids, custom_vals)
+                    variant.write(vals)
                 else:
                     # create a new variant
                     vals = self.product_tmpl_id.get_variant_vals(self.value_ids.ids, custom_vals)

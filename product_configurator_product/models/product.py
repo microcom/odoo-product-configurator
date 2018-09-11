@@ -21,6 +21,7 @@ class ProductProduct(models.Model):
             'product_id': self.id,
             'state': active_step,
             'last_step': last_step,
+            'modify_variant': True,
         })
 
         return {
