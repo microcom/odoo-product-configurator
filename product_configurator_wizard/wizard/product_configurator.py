@@ -323,6 +323,8 @@ class ProductConfigurator(models.TransientModel):
         comodel_name='sale.order.line',
         readonly=True,
     )
+    modify_variant = fields.Boolean('Modify Selected Variant', default=False)
+    allow_duplicate = fields.Boolean('Allow Duplicate Variant', default=False)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -945,8 +947,27 @@ class ProductConfigurator(models.TransientModel):
         # error legitimately raised in a nested routine
         # is passed through.
         try:
-            variant = self.product_tmpl_id.create_get_variant(
-                self.value_ids.ids, custom_vals)
+            if not (self.modify_variant or self.allow_duplicate):
+                variant = self.product_tmpl_id.create_get_variant(
+                    self.value_ids.ids, custom_vals)
+            else:
+                variant = self.product_id
+                duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
+                if variant in duplicates:
+                    # no change, leave as is
+                    pass
+                elif duplicates and not self.allow_duplicate:
+                    # variant duplicates another product, warn user
+                    raise ValidationError(
+                        _('Duplicate configuration! Variant already exists (id={})').format(duplicates[0].id)
+                    )
+                elif variant and self.modify_variant:
+                    # modify current variant
+                    variant.update_variant(self.value_ids.ids, custom_vals)
+                else:
+                    # create a new variant
+                    vals = self.product_tmpl_id.get_variant_vals(self.value_ids.ids, custom_vals)
+                    variant = self.env['product.product'].create(vals)
         except ValidationError:
             raise
         except Exception as e:

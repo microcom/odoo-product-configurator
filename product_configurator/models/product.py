@@ -347,6 +347,25 @@ class ProductTemplate(models.Model):
         return vals
 
     @api.multi
+    def get_update_variant_vals(self, value_ids, custom_values=None):
+        """ Hook to alter the values of the product variant before record update
+
+            :param value_ids: list of product.attribute.values ids
+            :param custom_values: dict {product.attribute.id: custom_value}
+
+            :returns: dictionary of values to pass to product.write() method
+        """
+        self.ensure_one()
+        # extracted from get_variant_vals()
+        vals = {'attribute_value_ids': [(6, 0, value_ids)]}
+        if custom_values:
+            vals.update({
+                'value_custom_ids': self.encode_custom_values(custom_values)
+            })
+
+        return vals
+
+    @api.multi
     def create_variant(self, value_ids, custom_values=None):
         """Wrapper method for backward compatibility"""
         # TODO: Remove in newer versions
@@ -390,6 +409,32 @@ class ProductTemplate(models.Model):
         variant = self.env['product.product'].create(vals)
 
         return variant
+
+    @api.multi
+    def find_duplicates(self, value_ids, custom_values=None):
+        """
+        Copy of create_get_variant(), returns without creating new variant
+        """
+        if custom_values is None:
+            custom_values = {}
+        valid = self.validate_configuration(value_ids, custom_values)
+        if not valid:
+            raise ValidationError(_('Invalid Configuration'))
+
+        duplicates = self.search_variant(value_ids,
+                                         custom_values=custom_values)
+
+        # At the moment, I don't have enough confidence with my understanding
+        # of binary attributes, so will leave these as not matching...
+        # In theory, they should just work, if they are set to "non search"
+        # in custom field def!
+        # TODO: Check the logic with binary attributes
+        if custom_values:
+            value_custom_ids = self.encode_custom_values(custom_values)
+            if any('attachment_ids' in cv[2] for cv in value_custom_ids):
+                duplicates = False
+
+        return duplicates
 
     def validate_domains_against_sels(self, domains, sel_val_ids):
         # must handle both cases in [7, [6, False, []]]
