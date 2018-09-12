@@ -601,12 +601,12 @@ class ProductTemplate(models.Model):
 
     # Override name_search delegation to variants introduced by Odony
     # TODO: Verify this is still a problem in v9
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        return super(models.Model, self).name_search(name=name,
-                                                     args=args,
-                                                     operator=operator,
-                                                     limit=limit)
+    # @api.model
+    # def name_search(self, name='', args=None, operator='ilike', limit=100):
+    #     return super(models.Model, self).name_search(name=name,
+    #                                                  args=args,
+    #                                                  operator=operator,
+    #                                                  limit=limit)
 
     @api.multi
     def create_variant_ids(self):
@@ -776,3 +776,17 @@ class ProductProduct(models.Model):
                 product.config_name = product.get_config_name()
             else:
                 product.config_name = product.name
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        """ Search on attributes when nothing is found. Useful for part number search
+        """
+        res = super(ProductProduct, self).name_search(
+            name=name, args=args, operator=operator, limit=limit)
+        if not res and name:
+            domain = [('attribute_line_ids', operator, name)]
+            if args:
+                domain += args
+            products = self.search(domain, limit=limit)
+            res = products.name_get()
+        return res
