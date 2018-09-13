@@ -6,7 +6,7 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    product_selectable = fields.Boolean('Product reusable')
+    product_reusable = fields.Boolean('Product reusable')
     product_modifiable = fields.Boolean('Product modifiable')
     module_product_configurator_wizard = fields.Boolean('Configurator in sales')
     module_product_configurator_purchase = fields.Boolean('Configurator in purchase')
@@ -22,12 +22,12 @@ class ResConfigSettings(models.TransientModel):
         res = super(ResConfigSettings, self).get_values()
         params = self.env['ir.config_parameter'].sudo()
 
-        product_selectable = literal_eval(params.get_param('product_configurator.product_selectable', default='False'))
+        product_reusable = literal_eval(params.get_param('product_configurator.product_reusable', default='False'))
         product_modifiable = literal_eval(params.get_param('product_configurator.product_modifiable', default='False'))
         product_name_separator = params.get_param('product_configurator_name.product_name_separator')
 
         res.update(
-            product_selectable=product_selectable,
+            product_reusable=product_reusable,
             product_modifiable=product_modifiable,
             product_name_separator=product_name_separator
         )
@@ -36,7 +36,7 @@ class ResConfigSettings(models.TransientModel):
     def set_values(self):
         super(ResConfigSettings, self).set_values()
 
-        self.env['ir.config_parameter'].sudo().set_param('product_configurator.product_selectable', self.product_selectable)
+        self.env['ir.config_parameter'].sudo().set_param('product_configurator.product_reusable', self.product_reusable)
         self.env['ir.config_parameter'].sudo().set_param('product_configurator.product_modifiable', self.product_modifiable)
         self.env['ir.config_parameter'].sudo().set_param('product_configurator_name.product_name_separator', self.product_name_separator)
 

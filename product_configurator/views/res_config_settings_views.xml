@@ -23,10 +23,10 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
-                            <field name="product_selectable"/>
+                            <field name="product_reusable"/>
                         </div>
                         <div class="o_setting_right_pane">
-                            <label for="product_selectable"/>
+                            <label for="product_reusable"/>
                             <div class="text-muted">
                                 Configured products can be reused in other sale order lines. (Bypassing the configure button)
                             </div>

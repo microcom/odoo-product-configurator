@@ -292,7 +292,7 @@ class ProductConfigurator(models.TransientModel):
     @api.model
     def _default_allow_duplicate(self):
         allow_duplicate = not literal_eval(self.env['ir.config_parameter'].sudo().get_param(
-            'product_configurator.product_selectable', default='False'))
+            'product_configurator.product_reusable', default='False'))
         return allow_duplicate
 
     attribute_line_ids = fields.One2many(

@@ -648,9 +648,9 @@ class ProductProduct(models.Model):
         if not self.config_ok:
             return None
 
-        product_selectable = literal_eval(self.env['ir.config_parameter'].sudo().get_param(
-            'product_configurator.product_selectable', default='False'))
-        if product_selectable:
+        product_reusable = literal_eval(self.env['ir.config_parameter'].sudo().get_param(
+            'product_configurator.product_reusable', default='False'))
+        if product_reusable:
             return None
 
         # At the moment, I don't have enough confidence with my understanding
