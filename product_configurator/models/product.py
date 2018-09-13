@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from ast import literal_eval
+from lxml import etree
+
 from odoo.tools.misc import formatLang
 from odoo.exceptions import ValidationError
 from odoo import models, fields, api, tools, _
-from lxml import etree
 
 
 class ProductTemplate(models.Model):
@@ -644,6 +646,11 @@ class ProductProduct(models.Model):
     @api.constrains('attribute_value_ids')
     def _check_duplicate_product(self):
         if not self.config_ok:
+            return None
+
+        product_selectable = literal_eval(self.env['ir.config_parameter'].sudo().get_param(
+            'product_configurator.product_selectable', default='False'))
+        if product_selectable:
             return None
 
         # At the moment, I don't have enough confidence with my understanding

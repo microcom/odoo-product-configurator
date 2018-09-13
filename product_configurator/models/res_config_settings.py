@@ -6,7 +6,7 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    product_selectable = fields.Boolean('Product selectable')
+    product_selectable = fields.Boolean('Product reusable')
     product_modifiable = fields.Boolean('Product modifiable')
     module_product_configurator_wizard = fields.Boolean('Configurator in sales')
     module_product_configurator_purchase = fields.Boolean('Configurator in purchase')
