@@ -40,3 +40,16 @@ class ResConfigSettings(models.TransientModel):
         self.env['ir.config_parameter'].sudo().set_param('product_configurator.product_modifiable', self.product_modifiable)
         self.env['ir.config_parameter'].sudo().set_param('product_configurator_name.product_name_separator', self.product_name_separator)
 
+    @api.onchange('product_reusable')
+    def _onchange_product_reusable(self):
+        for record in self:
+            # cannot have both False, reactivate the other
+            if not (record.product_reusable or record.product_modifiable):
+                record.product_modifiable = True
+
+    @api.onchange('product_modifiable')
+    def _onchange_product_modifiable(self):
+        for record in self:
+            # cannot have both False, reactivate the other
+            if not (record.product_reusable or record.product_modifiable):
+                record.product_reusable = True
