@@ -960,7 +960,6 @@ class ProductConfigurator(models.TransientModel):
         # error legitimately raised in a nested routine
         # is passed through.
         try:
-            print(dict(product_modifiable=self.product_modifiable, product_reusable=self.product_reusable))
             if not self.product_modifiable:
                 variant = self.product_tmpl_id.create_get_variant(
                     self.value_ids.ids, custom_vals)
