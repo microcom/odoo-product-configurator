@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from ast import literal_eval
+
 from odoo import models, fields, api
 
 
@@ -20,12 +22,15 @@ class SaleOrderLine(models.Model):
 
         cfg_steps = self.product_id.product_tmpl_id.config_step_line_ids
         active_step = str(cfg_steps[0].id) if cfg_steps else 'configure'
+        modify_variant = literal_eval(self.env['ir.config_parameter'].sudo().get_param(
+            'product_configurator.product_modifiable', default='False'))
 
         wizard_obj = self.env['product.configurator']
         wizard = wizard_obj.create({
             'product_id': self.product_id.id,
             'state': active_step,
             'order_line_id': self.id,
+            'modify_variant': modify_variant,
         })
 
         return {

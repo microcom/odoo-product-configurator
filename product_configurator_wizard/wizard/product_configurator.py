@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from ast import literal_eval
 from lxml import etree
 
 from odoo.osv import orm
@@ -288,6 +289,18 @@ class ProductConfigurator(models.TransientModel):
             vals.update(nvals)
         return {'value': vals, 'domain': domains}
 
+    @api.model
+    def _default_product_modifiable(self):
+        product_modifiable = literal_eval(self.env['ir.config_parameter'].sudo().get_param(
+            'product_configurator.product_modifiable', default='False'))
+        return product_modifiable
+
+    @api.model
+    def _default_product_reusable(self):
+        product_reusable = literal_eval(self.env['ir.config_parameter'].sudo().get_param(
+            'product_configurator.product_reusable', default='False'))
+        return product_reusable
+
     attribute_line_ids = fields.One2many(
         comodel_name='product.attribute.line',
         related='product_tmpl_id.attribute_line_ids',
@@ -323,6 +336,8 @@ class ProductConfigurator(models.TransientModel):
         comodel_name='sale.order.line',
         readonly=True,
     )
+    product_modifiable = fields.Boolean('Modify Selected Variant', default=_default_product_modifiable)
+    product_reusable = fields.Boolean('Reuse Variant, Do Not Duplicate', default=_default_product_reusable)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -945,8 +960,28 @@ class ProductConfigurator(models.TransientModel):
         # error legitimately raised in a nested routine
         # is passed through.
         try:
-            variant = self.product_tmpl_id.create_get_variant(
-                self.value_ids.ids, custom_vals)
+            if not self.product_modifiable:
+                variant = self.product_tmpl_id.create_get_variant(
+                    self.value_ids.ids, custom_vals)
+            else:
+                variant = self.product_id
+                duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
+                if variant in duplicates:
+                    # no change, leave as is
+                    pass
+                elif duplicates and self.product_reusable:
+                    # variant duplicates another product, warn user
+                    raise ValidationError(
+                        _('Duplicate configuration! Variant already exists (id={})').format(duplicates[0].id)
+                    )
+                elif variant and self.product_modifiable:
+                    # modify current variant
+                    vals = self.product_tmpl_id.get_update_variant_vals(self.value_ids.ids, custom_vals)
+                    variant.write(vals)
+                else:
+                    # create a new variant
+                    vals = self.product_tmpl_id.get_variant_vals(self.value_ids.ids, custom_vals)
+                    variant = self.env['product.product'].create(vals)
         except ValidationError:
             raise
         except Exception as e:
