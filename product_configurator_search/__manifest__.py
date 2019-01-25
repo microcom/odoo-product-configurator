@@ -11,6 +11,7 @@
         'product_configurator_wizard'
     ],
     "data": [
+        'data/product_attribute.xml',
         'wizard/product_configurator_view.xml',
     ],
     'demo': [],
