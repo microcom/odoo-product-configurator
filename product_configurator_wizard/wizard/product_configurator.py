@@ -319,6 +319,7 @@ class ProductConfigurator(models.TransientModel):
     )
     product_id = fields.Many2one(
         comodel_name='product.product',
+        readonly=True,
         string='Product Variant',
         help='Set only when re-configuring a existing variant'
     )
@@ -338,25 +339,6 @@ class ProductConfigurator(models.TransientModel):
     product_modifiable = fields.Boolean('Modify Selected Variant', default=_default_product_modifiable)
     product_reusable = fields.Boolean('Reuse Variant, Do Not Duplicate', default=_default_product_reusable)
     product_force_create = fields.Boolean('Must Create Variant', default=False)
-    search_filter = fields.Char('Search Code')
-
-    @api.multi
-    @api.onchange('product_id')
-    def _onchange_product_id(self):
-        for record in self:
-            if record.product_id:
-                record.product_tmpl_id = record.product_id.product_tmpl_id
-
-    @api.multi
-    @api.onchange('search_filter')
-    def _onchange_search_filter(self):
-        if self.search_filter:
-            found = self.env['product.product'].search([('default_code', 'like', self.search_filter)])
-            if found:
-                self.product_id = found[0]
-            return {'domain': {'product_id': [('default_code', 'like', self.search_filter)]}}
-        else:
-            return {'domain': {'product_id': []}}
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
