@@ -45,6 +45,17 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
+                            <field name="module_product_configurator_search"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_product_configurator_search"/>
+                            <div class="text-muted">
+                                Select variant through MPN in wizard.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
                             <field name="module_product_configurator_name"/>
                         </div>
                         <div class="o_setting_right_pane">
@@ -116,6 +127,17 @@
                     </div>
                     <div class="col-xs-12 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane">
+                            <field name="module_product_configurator_search"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_product_configurator_search"/>
+                            <div class="text-muted">
+                                Select variant through MPN in wizard.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
                             <field name="module_product_configurator_name"/>
                         </div>
                         <div class="o_setting_right_pane">
@@ -171,6 +193,17 @@
                             <label string="Configurator Product forms" for="module_product_configurator_product"/>
                             <div class="text-muted">
                                 Add configurator buttons in product forms
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="module_product_configurator_search"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="module_product_configurator_search"/>
+                            <div class="text-muted">
+                                Select variant through MPN in wizard.
                             </div>
                         </div>
                     </div>

@@ -43,4 +43,4 @@ class ProductConfigurator(models.TransientModel):
             ('attribute_id', '=', attribute_mpn.id),
             ('name', 'like', self.search_filter),
         ])
-        self.allowed_product_ids = matching_values.mapped('product_ids')
+        self.allowed_product_ids = matching_values.mapped('product_ids').filtered('config_ok')
