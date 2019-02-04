@@ -28,11 +28,11 @@ class ProductConfigurator(models.TransientModel):
     def _onchange_search_filter(self):
         self.ensure_one()
         # allowed_product_ids updated by search_filter
-        if self.allowed_product_ids:
-            self.product_id = self.allowed_product_ids[0]
+        if self.search_filter:
+            self.product_id = self.allowed_product_ids and self.allowed_product_ids[0] or False
             return {'domain': {'product_id': [('id', 'in', self.allowed_product_ids.ids)]}}
         else:
-            return {'domain': {'product_id': []}}
+            return {'domain': {'product_id': [('config_ok', '=', True)]}}
 
     @api.multi
     @api.depends('search_filter')
