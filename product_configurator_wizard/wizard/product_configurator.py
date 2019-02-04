@@ -338,6 +338,7 @@ class ProductConfigurator(models.TransientModel):
     )
     product_modifiable = fields.Boolean('Modify Selected Variant', default=_default_product_modifiable)
     product_reusable = fields.Boolean('Reuse Variant, Do Not Duplicate', default=_default_product_reusable)
+    product_force_create = fields.Boolean('Must Create Variant', default=False)
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
@@ -960,24 +961,37 @@ class ProductConfigurator(models.TransientModel):
         # error legitimately raised in a nested routine
         # is passed through.
         try:
-            if not self.product_modifiable:
-                variant = self.product_tmpl_id.create_get_variant(
-                    self.value_ids.ids, custom_vals)
-            else:
+            # - create when reusable, will reuse matching instead of creating duplicate
+            # - update when modifiable, will change current variant instead of picking/creating new one
+            duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
+            if self.product_id:
+                # used cogs icon (or selected variant in first step)
                 variant = self.product_id
-                duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
                 if variant in duplicates:
                     # no change, leave as is
                     pass
+                elif not self.product_modifiable:
+                    variant = self.product_tmpl_id.create_get_variant(
+                        self.value_ids.ids, custom_vals)
                 elif duplicates and self.product_reusable:
                     # variant duplicates another product, warn user
                     raise ValidationError(
                         _('Duplicate configuration! Variant already exists (id={})').format(duplicates[0].id)
                     )
-                elif variant and self.product_modifiable:
+                else:
                     # modify current variant
                     vals = self.product_tmpl_id.get_update_variant_vals(self.value_ids.ids, custom_vals)
                     variant.write(vals)
+            else:
+                if duplicates and self.product_reusable and self.product_force_create:
+                    # variant duplicates another product, warn user
+                    raise ValidationError(
+                        _('Duplicate configuration! Variant already exists (id={})').format(duplicates[0].id)
+                    )
+                # creating new SO line
+                if self.product_reusable:
+                    variant = self.product_tmpl_id.create_get_variant(
+                        self.value_ids.ids, custom_vals)
                 else:
                     # create a new variant
                     vals = self.product_tmpl_id.get_variant_vals(self.value_ids.ids, custom_vals)

@@ -12,6 +12,7 @@ class ResConfigSettings(models.TransientModel):
     module_product_configurator_purchase = fields.Boolean('Configurator in purchase')
     module_product_configurator_product = fields.Boolean('Configurator in products')
     module_product_configurator_name = fields.Boolean('Configurator name')
+    module_product_configurator_search = fields.Boolean('Configurator MPN Search')
     product_name_separator = fields.Char('Name separator')
     module_product_configurator_step_restriction = fields.Boolean('Configurator step restriction')
     module_product_configurator_use_default_pricelist = fields.Boolean('Configurator default price list')
