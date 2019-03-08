@@ -13,15 +13,22 @@ class ProductConfigurator(models.TransientModel):
 
     product_id = fields.Many2one(readonly=False)
     search_filter = fields.Char('Search Code')
+    manufacturer_id = fields.Many2one(
+        'product.attribute.value', string='Manufacturer', domain=lambda self: [
+            ('attribute_id', '=', self.env.ref('product_configurator_search.attribute_manufacturer').id)])
     allowed_product_ids = fields.Many2many(
         'product.product', string='Allowed Products', compute='_compute_allowed_product_ids')
 
     @api.multi
     @api.onchange('product_id')
     def _onchange_product_id(self):
+        attribute_manufacturer = self.env.ref('product_configurator_search.attribute_manufacturer')
         for record in self:
             if record.product_id:
                 record.product_tmpl_id = record.product_id.product_tmpl_id
+                manufacturer_id = record.product_id.attribute_value_ids.filtered(
+                    lambda x: x.attribute_id == attribute_manufacturer)
+                record.manufacturer_id = manufacturer_id
 
     @api.multi
     @api.onchange('search_filter')
