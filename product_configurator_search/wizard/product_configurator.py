@@ -12,7 +12,7 @@ class ProductConfigurator(models.TransientModel):
     _inherit = 'product.configurator'
 
     product_id = fields.Many2one(readonly=False)
-    search_filter = fields.Char('Search Code')
+    search_filter = fields.Char('MPN')
     manufacturer_id = fields.Many2one(
         'product.attribute.value', string='Manufacturer', domain=lambda self: [
             ('attribute_id', '=', self.env.ref('product_configurator_search.attribute_manufacturer').id)])
