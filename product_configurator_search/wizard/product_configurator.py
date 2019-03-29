@@ -31,23 +31,28 @@ class ProductConfigurator(models.TransientModel):
                 record.manufacturer_id = manufacturer_id
 
     @api.multi
-    @api.onchange('search_filter')
+    @api.onchange('search_filter', 'product_tmpl_id')
     def _onchange_search_filter(self):
         self.ensure_one()
-        # allowed_product_ids updated by search_filter
-        if self.search_filter:
-            self.product_id = self.allowed_product_ids and self.allowed_product_ids[0] or False
+        if self.search_filter or self.product_tmpl_id:
+            if self.search_filter and self.allowed_product_ids:
+                self.product_id = self.allowed_product_ids[0]
             return {'domain': {'product_id': [('id', 'in', self.allowed_product_ids.ids)]}}
         else:
             return {'domain': {'product_id': [('config_ok', '=', True)]}}
 
     @api.multi
-    @api.depends('search_filter')
+    @api.depends('search_filter', 'product_tmpl_id')
     def _compute_allowed_product_ids(self):
         self.ensure_one()
-        attribute_mpn = self.env.ref('product_configurator_search.attribute_mpn')
-        matching_values = self.env['product.attribute.value'].search([
-            ('attribute_id', '=', attribute_mpn.id),
-            ('name', 'like', self.search_filter),
-        ])
-        self.allowed_product_ids = matching_values.mapped('product_ids').filtered('config_ok')
+        if self.search_filter:
+            attribute_mpn = self.env.ref('product_configurator_search.attribute_mpn')
+            matching_values = self.env['product.attribute.value'].search([
+                ('attribute_id', '=', attribute_mpn.id),
+                ('name', 'like', self.search_filter),
+            ])
+            self.allowed_product_ids = matching_values.mapped('product_ids').filtered('config_ok')
+        elif self.product_tmpl_id:
+            self.allowed_product_ids = self.product_tmpl_id.product_variant_ids
+        else:
+            self.allowed_product_ids = None
