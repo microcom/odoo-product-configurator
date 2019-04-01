@@ -106,3 +106,11 @@ class ProductConfigurator(models.TransientModel):
         if len(allowed_product_ids) == 1 and select:
             self.with_context(noupdate_variant=True).product_id = allowed_product_ids[0]
         return {'domain': {'product_id': [('id', 'in', allowed_product_ids.ids)]}}
+
+    @api.multi
+    def action_next_step(self):
+        # remember attribute_values
+        if not self.value_ids:
+            self.value_ids += self.mpn_ids
+            self.value_ids += self.manufacturer_id
+        return super(ProductConfigurator, self).action_next_step()
