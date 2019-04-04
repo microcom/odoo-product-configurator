@@ -10,7 +10,8 @@
                 <group name='static_form' colspan="3" states='select'>
                     <field name="search_filter"/>
                     <field name="mpn_ids" invisible="1"/>
-                    <field name="manufacturer_id"/>
+                    <field name="manufacturer_id"
+                        context="{'default_attribute_id': %(product_configurator_search.attribute_manufacturer)d}"/>
                     <field name="product_tmpl_id" required="True"/>
                     <field name="product_id"/>
                 </group>
