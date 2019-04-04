@@ -119,7 +119,11 @@ class ProductConfigurator(models.TransientModel):
                 # add new mpn
                 if not self.mpn_ids and self.search_filter and len(self.search_filter) > 2:
                     # new mpn
-                    self.mpn_ids = self.env['product.attribute.value'].create({
+                    # _set_price_extra() only works inside the product template form
+                    unbug = self.with_context(
+                        active_model='product.template',
+                        active_id=self.product_tmpl_id.id)
+                    self.mpn_ids = unbug.env['product.attribute.value'].create({
                         'name': self.search_filter,
                         'attribute_id': attribute_mpn.id,
                     })
