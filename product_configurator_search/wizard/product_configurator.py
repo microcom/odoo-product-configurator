@@ -111,6 +111,30 @@ class ProductConfigurator(models.TransientModel):
     def action_next_step(self):
         # remember attribute_values
         if not self.value_ids:
-            self.value_ids += self.mpn_ids
-            self.value_ids += self.manufacturer_id
+            # update mpn line
+            attribute_mpn = self.env.ref('product_configurator_search.attribute_mpn')
+            line_mpn = self.product_tmpl_id.attribute_line_ids.filtered(
+                lambda x: x.attribute_id == attribute_mpn)
+            if line_mpn:
+                # add new mpn
+                if not self.mpn_ids and self.search_filter and len(self.search_filter) > 2:
+                    # new mpn
+                    self.mpn_ids = self.env['product.attribute.value'].create({
+                        'name': self.search_filter,
+                        'attribute_id': attribute_mpn.id,
+                    })
+                # add template
+                line_mpn.value_ids += self.mpn_ids
+                # add variant proxy
+                self.value_ids += self.mpn_ids
+
+            # add to variant
+            attribute_manufacturer = self.env.ref('product_configurator_search.attribute_manufacturer')
+            line_manufacturer = self.product_tmpl_id.attribute_line_ids.filtered(
+                lambda x: x.attribute_id == attribute_manufacturer)
+            if line_manufacturer:
+                # add template
+                line_manufacturer.value_ids += self.manufacturer_id
+                # add variant proxy
+                self.value_ids += self.manufacturer_id
         return super(ProductConfigurator, self).action_next_step()
