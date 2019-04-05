@@ -608,7 +608,11 @@ class ProductConfigurator(models.TransientModel):
                 on_change="onchange_attribute_value(%s, context)" % field_name,
                 default_focus="1" if attr_line == attr_lines[0] else "0",
                 attrs=str(attrs),
-                context="{'show_attribute': False}",
+                context=str({
+                    'show_attribute': False,
+                    'product_tmpl_id': wiz.product_tmpl_id.id,
+                    'default_attribute_id': attribute_id
+                }),
                 options=str({
                     'no_create': not attr_line.attribute_id.create_on_the_fly,
                     'no_create_edit': not attr_line.attribute_id.create_on_the_fly,
@@ -963,7 +967,7 @@ class ProductConfigurator(models.TransientModel):
         try:
             # - create when reusable, will reuse matching instead of creating duplicate
             # - update when modifiable, will change current variant instead of picking/creating new one
-            duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
+            duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals, product_id=self.product_id)
             if self.product_id:
                 # used cogs icon (or selected variant in first step)
                 variant = self.product_id

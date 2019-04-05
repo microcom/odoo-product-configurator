@@ -6,5 +6,9 @@
             <field name="name">Manufacturer Part Number</field>
         </record>
 
+        <record id="attribute_manufacturer" model="product.attribute">
+            <field name="name">Manufacturer</field>
+        </record>
+
     </data>
 </openerp>
