@@ -413,7 +413,7 @@ class ProductTemplate(models.Model):
         return variant
 
     @api.multi
-    def find_duplicates(self, value_ids, custom_values=None):
+    def find_duplicates(self, value_ids, custom_values=None, product_id=None):
         """
         Copy of create_get_variant(), returns without creating new variant
         """

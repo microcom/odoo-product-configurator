@@ -967,7 +967,7 @@ class ProductConfigurator(models.TransientModel):
         try:
             # - create when reusable, will reuse matching instead of creating duplicate
             # - update when modifiable, will change current variant instead of picking/creating new one
-            duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals)
+            duplicates = self.product_tmpl_id.find_duplicates(self.value_ids.ids, custom_vals, product_id=self.product_id)
             if self.product_id:
                 # used cogs icon (or selected variant in first step)
                 variant = self.product_id

@@ -66,12 +66,12 @@ class ProductConfigurator(models.TransientModel):
     @api.multi
     @api.onchange('manufacturer_id')
     def _onchange_manufacturer_id(self):
-        return self.update_variant_domain(select=False)
+        return self.update_variant_domain(select=True)
 
     @api.multi
     @api.onchange('product_tmpl_id')
     def _onchange_product_tmpl_id(self):
-        return self.update_variant_domain(select=False)
+        return self.update_variant_domain(select=True)
 
     @api.multi
     def update_variant_domain(self, select=True):
